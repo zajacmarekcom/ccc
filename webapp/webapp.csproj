@@ -260,37 +260,9 @@
     <Compile Include="Helpers\Builders\IndexViewModelBuilder.cs" />
     <Compile Include="Helpers\Builders\SelectedMarketSegmentBuilder.cs" />
     <Compile Include="Helpers\Html\DisplayStringHelper.cs" />
-    <Compile Include="Migrations\201502110604044_Init.cs" />
-    <Compile Include="Migrations\201502110604044_Init.Designer.cs">
-      <DependentUpon>201502110604044_Init.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201502110605237_AddedSettings.cs" />
-    <Compile Include="Migrations\201502110605237_AddedSettings.Designer.cs">
-      <DependentUpon>201502110605237_AddedSettings.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201502150831370_AddedPostCodes.cs" />
-    <Compile Include="Migrations\201502150831370_AddedPostCodes.Designer.cs">
-      <DependentUpon>201502150831370_AddedPostCodes.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201503112225526_producerGroup.cs" />
-    <Compile Include="Migrations\201503112225526_producerGroup.Designer.cs">
-      <DependentUpon>201503112225526_producerGroup.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201505052000473_AddedSapNoAndNewVisitDate.cs" />
-    <Compile Include="Migrations\201505052000473_AddedSapNoAndNewVisitDate.Designer.cs">
-      <DependentUpon>201505052000473_AddedSapNoAndNewVisitDate.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201505052133360_NullableNewVisitDate.cs" />
-    <Compile Include="Migrations\201505052133360_NullableNewVisitDate.Designer.cs">
-      <DependentUpon>201505052133360_NullableNewVisitDate.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201505060603110_RemovedNotNullCondition.cs" />
-    <Compile Include="Migrations\201505060603110_RemovedNotNullCondition.Designer.cs">
-      <DependentUpon>201505060603110_RemovedNotNullCondition.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201505060629323_RemovedNotNullCondition2.cs" />
-    <Compile Include="Migrations\201505060629323_RemovedNotNullCondition2.Designer.cs">
-      <DependentUpon>201505060629323_RemovedNotNullCondition2.cs</DependentUpon>
+    <Compile Include="Migrations\201904141319592_Init.cs" />
+    <Compile Include="Migrations\201904141319592_Init.Designer.cs">
+      <DependentUpon>201904141319592_Init.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Agent.cs" />
@@ -1038,29 +1010,8 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201502110604044_Init.resx">
-      <DependentUpon>201502110604044_Init.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201502110605237_AddedSettings.resx">
-      <DependentUpon>201502110605237_AddedSettings.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201502150831370_AddedPostCodes.resx">
-      <DependentUpon>201502150831370_AddedPostCodes.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201503112225526_producerGroup.resx">
-      <DependentUpon>201503112225526_producerGroup.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201505052000473_AddedSapNoAndNewVisitDate.resx">
-      <DependentUpon>201505052000473_AddedSapNoAndNewVisitDate.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201505052133360_NullableNewVisitDate.resx">
-      <DependentUpon>201505052133360_NullableNewVisitDate.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201505060603110_RemovedNotNullCondition.resx">
-      <DependentUpon>201505060603110_RemovedNotNullCondition.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201505060629323_RemovedNotNullCondition2.resx">
-      <DependentUpon>201505060629323_RemovedNotNullCondition2.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201904141319592_Init.resx">
+      <DependentUpon>201904141319592_Init.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
