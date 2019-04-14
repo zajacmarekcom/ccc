@@ -1,0 +1,131 @@
+﻿@using webapp.Enums
+@model webapp.ViewModels.Client.StatusNotesViewModel
+
+@{
+    ViewBag.Title = "Status klienta";
+    var notes = 0;
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    @Html.HiddenFor(model => model.VisitId)
+    @Html.HiddenFor(model => model.Edit)
+    <div class="row">
+        <div class="col-md-2"></div>
+        <div class="panel panel-default col-md-8">
+            <div class="panel-heading">
+                <h3 class="panel-title">Uwagi</h3>
+            </div>
+            <div class="panel-body">
+
+                <div class="row form-group">
+                    <div class="col-md-4">
+                        <label>Status firmy</label>
+                    </div>
+                    <div class="col-md-8">
+                        @if (Model.CanBeGreen)
+                        {
+                            <label><input type="radio" name="Status" value="1" @(Model == null || Model.Status == BusinessStatus.Green ? "checked" : "")/><span>zielony</span> - firma kompletna</label>
+                        }
+                        else
+                        {
+                            <p class="warning">Brak wymaganych danych do wybrania statusu zielonego</p>
+                        }
+                        <label><input type="radio" name="Status" value="2" @(Model != null && Model.Status == BusinessStatus.Yellow ? "checked" : "")/><span>żółty</span> - firma która ma niepełne dane ale dla której wymagana jest ponowna wizyta lub jest już zaplanowana</label>
+                        <label><input type="radio" name="Status" value="3" @(Model != null && Model.Status == BusinessStatus.Brown ? "checked" : "")/><span>brązowy</span> - firma która ma niepełne dane ale nigdy się nie dowiemy</label>
+                    </div>
+                </div>
+                <div class="row form-group @(!Model.CanBeGreen || Model == null || Model.Status != BusinessStatus.Yellow ? "hidden" : "")">
+                    <div class="col-md-4">
+                        Nowa data wizyty
+                    </div>
+                    <div class="col-md-8">
+                        <input type="text" name="NewVisitDate" class="visitDate form-control" placeholder="Kliknij aby wybrać datę">
+                        @Html.ValidationMessageFor(model => model.NewVisitDate)
+                    </div>
+                </div>
+
+                <div class="row col-md-12">
+                    <div class="col-md-12">
+                        <div class="col-md-4">
+                            Notatki:
+                        </div>
+                        <div class="col-md-8">
+                            <button type="button" class="btn btn-default" onclick="javascript: AddNote();">Dodaj</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="notes" class="col-md-12">
+                    @if (Model != null && Model.Notes != null)
+                    {
+                        foreach (var n in Model.Notes)
+                        {
+                            <div class='note row col-md-12'>
+                                <div class='col-md-4'>
+                                    Notatka <button type='button' class='btn btn-default' onclick='javascript: RemoveNote(this);'>Usuń</button>
+                                </div>
+                                <div class='col-md-8'>
+                                    <textarea rows='4' name='Notes[@notes].Text' class='form-input col-md-10'>@n.Text</textarea>
+                                </div>
+                            </div>
+                            notes++;
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2"></div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-2"></div>
+        <div class="col-md-8">
+            <button type="submit" class="btn btn-primary btn-block">Koniec</button>
+        </div>
+        <div class="col-md-2"></div>
+    </div>
+
+
+}
+
+<script>
+    var counter = @(notes);
+
+    function AddNote() {
+        var html = "<div class='note row col-md-12'>" +
+            "<div class='col-md-4'>" +
+                "Notatka <button type='button' class='btn btn-default' onclick='javascript: RemoveNote(this);'>Usuń</button>" +
+            "</div>" +
+            "<div class='col-md-8'>" +
+                "<textarea rows='4' name='Notes[" + counter + "].Text' class='form-input col-md-10'></textarea>" +
+        "</div>" +
+    "</div>";
+
+        $("#notes").append(html);
+        counter++;
+    }
+
+    function RemoveNote(button) {
+        var parent = button.parentNode.parentNode.parentNode;
+        parent.removeChild(button.parentNode.parentNode);
+
+        counter = 0;
+        $(".note").each(function (i, obj) {
+            $(this).find("textarea[name]").each(function () {
+                var name = $(this).attr("name");
+                name = name.replace(/\[.*?\]/g, "[" + counter + "]");
+                $(this).attr("name", name);
+            });
+            counter++;
+        });
+    }
+
+    $(".visitDate").datepicker({
+        format: "dd-mm-yyyy",
+        language: "pl",
+        calendarWeeks: true
+    });
+</script>

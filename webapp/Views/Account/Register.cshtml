@@ -1,0 +1,27 @@
+﻿@model webapp.Models.Register
+<div class="col-md-4"></div>
+<div class="content-center col-md-4">
+    <h2>Rejestracja</h2>
+    @using (Html.BeginForm("Register", "Account", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+        <div class="form-group">
+            @Html.ValidationMessageFor(model => model.UserName)
+            @Html.TextBoxFor(model => model.UserName, new { @class = "form-control", @placeholder = "Login" })<br />
+            @Html.ValidationMessageFor(model => model.Password)
+            @Html.PasswordFor(model => model.Password, new { @class = "form-control", @placeholder = "Hasło" })<br />
+            @Html.ValidationMessageFor(model => model.ConfirmPassword)
+            @Html.PasswordFor(model => model.ConfirmPassword, new { @class = "form-control", @placeholder = "Potwierdź hasło" })<br /><br />
+            @Html.ValidationMessageFor(model => model.Email)
+            @Html.TextBoxFor(model => model.Email, new { @class = "form-control", @placeholder = "E-mail" })<br />
+            @Html.ValidationMessageFor(model => model.PhoneNumber)
+            @Html.TextBoxFor(model => model.PhoneNumber, new { @class = "form-control", @placeholder = "Numer telefonu" })<br />
+            @Html.ValidationMessageFor(model => model.FirstName)
+            @Html.TextBoxFor(model => model.FirstName, new { @class = "form-control", @placeholder = "Imię" })<br />
+            @Html.ValidationMessageFor(model => model.LastName)
+            @Html.TextBoxFor(model => model.LastName, new { @class = "form-control", @placeholder = "Nazwisko" })<br />
+            <input type="submit" value="Rejestruj" class="btn btn-primary btn-block" />
+        </div>
+    }
+</div>
+<div class="col-md-4"></div>

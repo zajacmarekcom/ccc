@@ -1,0 +1,82 @@
+﻿@model IEnumerable<webapp.Models.Producer>
+@{
+    ViewBag.Title = "Mapa - producenci";
+}
+<div id="loading" style="display: none; position: fixed; width: 100%; height: 100%; top: 0; left: 0; filter:alpha(opacity=30); -moz-opacity:0.3; -khtml-opacity: 0.3; opacity: 0.3; background-color: #444; z-index: 2000;"></div>
+<div class="row">
+    <div class="col-md-3">
+        Wybierz producenta:
+    </div>
+    <div class="col-md-9">
+        <select class="form-control" id="producer">
+            <option value="0"></option>
+            @foreach(var item in Model)
+            {
+                <option value="@item.Id">@item.Name</option>
+            }
+        </select>
+    </div>
+</div>
+<br/>
+<div class="map_container">
+    <div id="map_canvas" class="map_canvas"></div>
+</div>
+
+<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
+<script type="text/javascript">
+    var markers = [];
+    var map;
+    var cluster = null;
+    var infowindow = null;
+    $(document).ready(function () {
+        initialize();
+        $("#producer").on("change", function () {
+            if (cluster) {
+                cluster.clearMarkers();
+            }
+            for (var i = 0; i < markers.length; i++) {
+                markers[i].setMap(null);
+            }
+            markers = [];
+            if (this.value != 0) {
+                $.post("/Client/GetClientsWithProducer", { producerId: $("#producer").val() }, function (data) {
+                    $.each(data, function (index, val) {
+                        var latlong = new google.maps.LatLng(val.Lat.replace(',', '.'), val.Lng.replace(',', '.'));
+                        var marker = new google.maps.Marker({
+                            position: latlong,
+                            map: map,
+                            title: val.Name
+                        });
+                        google.maps.event.addListener(marker, "click", function () {
+                            infowindow.setContent("<div id='info_content'>" + val.Name + "<br/><a href='/Client/ClientDetails/" + val.Id + "'>Szczegóły</a></div>");
+                            infowindow.open(map, this);
+                        });
+                        markers.push(marker);
+                    });
+                }, 'json');
+            }
+
+            cluster = new MarkerClusterer(map, markers);
+        });
+    });
+    function initialize() {
+        var mapOptions = {
+            center: new google.maps.LatLng(52,20, 21),
+            zoom: 6,
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+        };
+        map = new google.maps.Map(document.getElementById("map_canvas"),
+          mapOptions);
+        infowindow = new google.maps.InfoWindow({
+            content: "",
+            maxWidth: 600
+        });
+        // create a marker
+        //var latlng = new google.maps.LatLng(6.9167, 79.8473);
+        // var marker = new google.maps.Marker({
+        //     position: latlng,
+        //     map: map,
+        //      title: 'My Place'
+        // });
+    }
+</script>  

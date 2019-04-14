@@ -1,0 +1,1238 @@
+﻿@model webapp.Models.ViewModels.VisitDetailsViewModel
+
+@{
+    ViewBag.Title = "Szczegóły wizyty";
+}
+
+<div class="row">
+    <div class="col-md-2">
+        @if (((webapp.Security.CustomPrincipal)User).CustomIdentity.UserRoleName == "agent")
+        {
+            @Html.ActionLink("Wróć", "Index", new { controller = "Agent" }, new { @class = "btn btn-default" })
+        }
+        else if (((webapp.Security.CustomPrincipal)User).CustomIdentity.UserRoleName == "manager")
+        {
+            @Html.ActionLink("Wróć", "Index", new { controller = "Manager" }, new { @class = "btn btn-default" })
+        }
+
+    </div>
+    <div class="panel panel-default col-md-8">
+        <div class="row">
+            <div class="col-md-2"></div>
+            <div class="col-md-8">
+                <div class="row">
+                    <div class="col-md-6">
+                        @if (((webapp.Security.CustomPrincipal)User).CustomIdentity.UserRoleName == "agent")
+                        {
+                            @Html.ActionLink("Edytuj", "Add", new { controller = "Agent", edit = true, businessId = Model.Data.BusinessId }, new { @class = "btn btn-default btn-block" })
+                        }
+                    </div>
+                    <div class="col-md-6">
+                        @Html.ActionLink("Pobierz XLS", "GetXLS", new { Id = Model.VisitId }, new { @class = "btn btn-default btn-block" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2"></div>
+        </div>
+        <div class="panel-heading">
+
+            <h3 class="panel-title">Szczegóły</h3>
+        </div>
+        <div class="panel-body">
+
+            <div class="row col-md-12">
+                <div class="col-md-6">
+                    <label>Status</label>
+                </div>
+                <div class="col-md-6">
+                    @Model.Data.Status
+                </div>
+            </div>
+
+            <div class="row col-md-12">
+                <div class="col-md-6">
+                    <label>Rodzaj współpracy</label>
+                </div>
+                <div class="col-md-6">
+                    @Model.Data.CooperationType
+                </div>
+            </div>
+
+            <div class="row col-md-12">
+                <div class="col-md-6">
+                    <label>Data dodania</label>
+                </div>
+                <div class="col-md-6">
+                    @Model.Data.AddDate
+                </div>
+            </div>
+
+            <div class="row col-md-12">
+                <div class="col-md-12">
+                    <h4 class="text-center">Adres</h4>
+                </div>
+            </div>
+
+            <div class="row col-md-12">
+                <div class="col-md-6">
+                    <label>Nazwa odbiorcy</label>
+                </div>
+                <div class="col-md-6">
+                    @Model.Data.Name
+                </div>
+            </div>
+
+            <div class="row col-md-12">
+                <div class="col-md-6">
+                    <label>Ulica</label>
+                </div>
+                <div class="col-md-6">
+                    @Model.Data.Street
+                </div>
+            </div>
+
+            <div class="row col-md-12">
+                <div class="col-md-6">
+                    <label>Numer budynku</label>
+                </div>
+                <div class="col-md-6">
+                    @Model.Data.BuildingNumebr
+                </div>
+            </div>
+
+            <div class="row col-md-12">
+                <div class="col-md-6">
+                    <label>Kod pocztowy</label>
+                </div>
+                <div class="col-md-6">
+                    @Model.Data.PostCode
+                </div>
+            </div>
+
+            <div class="row col-md-12">
+                <div class="col-md-6">
+                    <label>Województwo</label>
+                </div>
+                <div class="col-md-6">
+                    @Model.Data.Province
+                </div>
+            </div>
+
+            <div class="row col-md-12">
+                <div class="col-md-6">
+                    <label>Powiat</label>
+                </div>
+                <div class="col-md-6">
+                    @Model.Data.District
+                </div>
+            </div>
+
+            <div class="row col-md-12">
+                <div class="col-md-6">
+                    <label>Miasto</label>
+                </div>
+                <div class="col-md-6">
+                    @Model.Data.City
+                </div>
+            </div>
+
+            <div class="row col-md-12">
+                <div class="col-md-12">
+                    <h4 class="text-center">Pozostałe dane</h4>
+                </div>
+            </div>
+
+            <div class="row col-md-12">
+                <div class="col-md-6">
+                    <label>NIP</label>
+                </div>
+                <div class="col-md-6">
+                    @Model.Data.NIP
+                </div>
+            </div>
+
+            <div class="row col-md-12">
+                <div class="col-md-6">
+                    <label>Forma prawna</label>
+                </div>
+                <div class="col-md-6">
+                    @Model.Data.LegalForm
+                </div>
+            </div>
+
+            <div class="row col-md-12">
+                <div class="col-md-6">
+                    <label>Rok rozpoczęcia działalności</label>
+                </div>
+                <div class="col-md-6">
+                    @Model.Data.StartYear
+                </div>
+            </div>
+
+            <div class="row col-md-12">
+                <div class="col-md-6">
+                    <label>Członek grupy</label>
+                </div>
+                <div class="col-md-6">
+                    @Model.Data.GroupMember
+                </div>
+            </div>
+
+            <div class="row col-md-12">
+                <div class="col-md-6">
+                    <label>Grupa</label>
+                </div>
+                <div class="col-md-6">
+                    @Model.Data.Group
+                </div>
+            </div>
+
+            <div class="row col-md-12">
+                <div class="col-md-6">
+                    <label>Właściciel</label>
+                </div>
+                <div class="col-md-6">
+                    @Model.Data.Owner
+                </div>
+            </div>
+
+            <div class="row col-md-12">
+                <div class="col-md-6">
+                    <label>Telefon właściciela</label>
+                </div>
+                <div class="col-md-6">
+                    @Model.Data.OwnerPhone
+                </div>
+            </div>
+
+            <div class="row col-md-12">
+                <div class="col-md-6">
+                    <label>Telefon 1</label>
+                </div>
+                <div class="col-md-6">
+                    @Model.Data.Phone1
+                </div>
+            </div>
+
+            <div class="row col-md-12">
+                <div class="col-md-6">
+                    <label>Telefon 2</label>
+                </div>
+                <div class="col-md-6">
+                    @Model.Data.Phone2
+                </div>
+            </div>
+
+            <div class="row col-md-12">
+                <div class="col-md-6">
+                    <label>Telefon 3</label>
+                </div>
+                <div class="col-md-6">
+                    @Model.Data.Phone3
+                </div>
+            </div>
+
+            <div class="row col-md-12">
+                <div class="col-md-6">
+                    <label>Adres e-mail</label>
+                </div>
+                <div class="col-md-6">
+                    @Model.Data.Email
+                </div>
+            </div>
+
+            <div class="row col-md-12">
+                <div class="col-md-6">
+                    <label>Adres www</label>
+                </div>
+                <div class="col-md-6">
+                    @Model.Data.Website
+                </div>
+            </div>
+
+            <div class="row col-md-12">
+                <div class="col-md-6">
+                    <label>Przedstawiciel handlowy</label>
+                </div>
+                <div class="col-md-6">
+                    @Model.Data.Agent
+                </div>
+            </div>
+
+            <div class="row col-md-12">
+                <div class="col-md-12">
+                    <h4 class="text-center">Osoba do kontaktu</h4>
+                </div>
+            </div>
+
+            <div class="row col-md-12">
+                <div class="col-md-6">
+                    <label>Osoba do kontaktu</label>
+                </div>
+                <div class="col-md-6">
+                    @Model.Data.ContactPerson
+                </div>
+            </div>
+
+            <div class="row col-md-12">
+                <div class="col-md-6">
+                    <label>Stanowisko osoby do kontaktu</label>
+                </div>
+                <div class="col-md-6">
+                    @Model.Data.ContactPersonPosition
+                </div>
+            </div>
+
+            <div class="row col-md-12">
+                <div class="col-md-6">
+                    <label>Adres e-mail</label>
+                </div>
+                <div class="col-md-6">
+                    @Model.Data.ContactPersonEmail
+                </div>
+            </div>
+
+            <div class="row col-md-12">
+                <div class="col-md-6">
+                    <label>Telefon</label>
+                </div>
+                <div class="col-md-6">
+                    @Model.Data.ContactPersonPhone
+                </div>
+            </div>
+
+            <div class="row col-md-12">
+                <div class="col-md-6">
+                    <label></label>
+                </div>
+                <div class="col-md-6">
+
+                </div>
+            </div>
+
+
+            <div class="row col-md-12">
+                <div class="col-md-6">
+                    <label>Data wizyty</label>
+                </div>
+                <div class="col-md-6">
+                    @Model.VisitDate
+                </div>
+            </div>
+
+            <div class="row col-md-12">
+                <div class="col-md-6">
+                    <label>Uwagi</label>
+                </div>
+                <div class="col-md-6">
+                    @Model.VisitComments
+                </div>
+            </div>
+
+            <div class="row col-md-12">
+                <div class="col-md-6">
+                    <label>Segment rynku wiodący</label>
+                </div>
+                <div class="col-md-6">
+                    @Model.MainMarketSegment
+                </div>
+            </div>
+
+            @if (Model.MarketSegments != null)
+            {
+                <div class="row col-md-12">
+                    <div class="col-md-12">
+                        <label>Segmenty rynku</label>
+                    </div>
+                </div>
+
+                foreach (webapp.Models.VisitMarketSegment seg in Model.MarketSegments)
+                {
+                    <div class="row col-md-12">
+                        <div class="col-md-6">
+                            @seg.MarketSegment.Name;
+                        </div>
+                        <div class="col-md-6">
+                            @seg.Percent %
+                        </div>
+                    </div>
+                }
+            }
+
+            @if (Model.Branches != null)
+            {
+                <div class="row col-md-12">
+                    <div class="col-md-12">
+                        <label>Oddziały</label>
+                    </div>
+                </div>
+
+                foreach (webapp.Models.Branch b in Model.Branches)
+                {
+                    <div class="row col-md-12">
+                        <div class="col-md-1">
+                        </div>
+                        <div class="col-md-5">
+                            <label>Nazwa</label>
+                        </div>
+                        <div class="col-md-6">
+                            @b.Name
+                        </div>
+                    </div>
+
+                    <div class="row col-md-12">
+                        <div class="col-md-2">
+                        </div>
+                        <div class="col-md-5">
+                            Miasto
+                        </div>
+                        <div class="col-md-5">
+                            @b.City
+                        </div>
+                    </div>
+
+                    <div class="row col-md-12">
+                        <div class="col-md-2">
+                        </div>
+                        <div class="col-md-5">
+                            Województwo
+                        </div>
+                        <div class="col-md-5">
+                            @foreach (webapp.Models.Province p in ViewBag.Provinces)
+                            {
+                                if (p.Id == b.ProvinceId)
+                                {
+                                    @p.Name
+                                }
+                            }
+                        </div>
+                    </div>
+
+                    <div class="row col-md-12">
+                        <div class="col-md-2">
+                        </div>
+                        <div class="col-md-5">
+                            Powiat
+                        </div>
+                        <div class="col-md-5">
+                            @foreach (webapp.Models.District p in ViewBag.Districts)
+                            {
+                                if (p.Id == b.DistrictId)
+                                {
+                                    @p.Name
+                                }
+                            }
+                        </div>
+                    </div>
+
+                    <div class="row col-md-12">
+                        <div class="col-md-2">
+                        </div>
+                        <div class="col-md-5">
+                            Ulica
+                        </div>
+                        <div class="col-md-5">
+                            @b.Street
+                        </div>
+                    </div>
+
+                    <div class="row col-md-12">
+                        <div class="col-md-2">
+                        </div>
+                        <div class="col-md-5">
+                            Numer budynku
+                        </div>
+                        <div class="col-md-5">
+                            @b.BuildingNumber
+                        </div>
+                    </div>
+
+                    <div class="row col-md-12">
+                        <div class="col-md-2">
+                        </div>
+                        <div class="col-md-5">
+                            Numer telefonu
+                        </div>
+                        <div class="col-md-5">
+                            @b.PhoneNumber
+                        </div>
+                    </div>
+
+                    <div class="row col-md-12">
+                        <div class="col-md-2">
+                        </div>
+                        <div class="col-md-5">
+                            Uwagi
+                        </div>
+                        <div class="col-md-5">
+                            @b.Comments
+                        </div>
+                    </div>
+                }
+            }
+
+            <div class="row col-md-12">
+                <div class="col-md-6">
+                    <label>Współpraca z innymi dostawcami wyrobów budowlanych (zaprawy, tynki, wylewki)</label>
+                </div>
+                <div class="col-md-6">
+                    @(Model.Cooperation ? "Tak" : "Nie")
+                </div>
+            </div>
+
+            @if (Model.Cooperation)
+            {
+                <div class="row col-md-12">
+                    <div class="col-md-12">
+                        <label>Dostawcy</label>
+                    </div>
+                </div>
+                foreach (var m in Model.Suppliers)
+                {
+                    <div class="row col-md-12">
+                        <div class="col-md-2"></div>
+                        <div class="col-md-5">
+                            @m.Name
+                        </div>
+                        <div class="col-md-5">
+                            @m.Text
+                        </div>
+                    </div>
+                }
+            }
+
+            @if (Model.Step3Manufs != null)
+            {
+                <div class="row col-md-12">
+                    <div class="col-md-12">
+                        <label>Producenci</label>
+                    </div>
+                </div>
+                foreach (webapp.Models.ViewModels.ViewManufacturer m in Model.Step3Manufs)
+                {
+                    <div class="row col-md-12">
+                        <div class="col-md-1"></div>
+                        <div class="col-md-6">
+                            @m.Name
+                        </div>
+                        <div class="col-md-5">
+                            @m.Percent %
+                        </div>
+                    </div>
+                }
+            }
+            @if (Model.Step3ManufsGroups != null)
+            {
+                foreach (webapp.Models.ViewModels.ViewManGroup g in Model.Step3ManufsGroups)
+                {
+                    <div class="row col-md-12">
+                        <div class="col-md-1"></div>
+                        <div class="col-md-6">
+                            <label>Grupa @g.Name</label>
+                        </div>
+                        <div class="col-md-5">
+                            @g.Percent %
+                        </div>
+                    </div>
+                    if (g.Manufacturers != null)
+                    {
+                        foreach (webapp.Models.ViewModels.ViewManufacturer m in g.Manufacturers)
+                        {
+                            <div class="row col-md-12">
+                                <div class="col-md-2"></div>
+                                <div class="col-md-6">
+                                    @m.Name
+                                </div>
+                                <div class="col-md-4">
+                                    @m.Percent %
+                                </div>
+                            </div>
+                        }
+                    }
+                }
+            }
+
+            @if (Model.RecType != null)
+            {
+                <div class="row col-md-12">
+                    <div class="col-md-6">
+                        <label>Typ odbioru</label>
+                    </div>
+                    <div class="col-md-6">
+                        @Model.RecType
+                    </div>
+                </div>
+            }
+            @if (Model.Manufs != null)
+            {
+                <div class="row col-md-12">
+                    <div class="col-md-12">
+                        <label>Odbiory bezpośrednie - producenci</label>
+                    </div>
+                </div>
+                foreach (webapp.Models.ViewModels.ViewManufacturer m in Model.Manufs)
+                {
+                    <div class="row col-md-12">
+                        <div class="col-md-2"></div>
+                        <div class="col-md-6">
+                            @m.Name
+                        </div>
+                        <div class="col-md-4">
+                            @m.Percent %
+                        </div>
+                    </div>
+                }
+            }
+            @if (Model.ManGroups != null)
+            {
+                foreach (webapp.Models.ViewModels.ViewManGroup g in Model.ManGroups)
+                {
+                    <div class="row col-md-12">
+                        <div class="col-md-1"></div>
+                        <div class="col-md-6">
+                            <label>Grupa @g.Name</label>
+                        </div>
+                        <div class="col-md-5">
+                            @g.Percent %
+                        </div>
+                    </div>
+                    if (g.Manufacturers != null)
+                    {
+                        foreach (webapp.Models.ViewModels.ViewManufacturer m in g.Manufacturers)
+                        {
+                            <div class="row col-md-12">
+                                <div class="col-md-2"></div>
+                                <div class="col-md-6">
+                                    @m.Name
+                                </div>
+                                <div class="col-md-4">
+                                    @m.Percent %
+                                </div>
+                            </div>
+                        }
+                    }
+                }
+            }
+
+            @if (Model.Distributors != null)
+            {
+                <div class="row col-md-12">
+                    <div class="col-md-12">
+                        <label>Odbiory pośrednie - dystrybutorzy + asortyment</label>
+                    </div>
+                </div>
+                foreach (var dis in Model.Distributors)
+                {
+                    <div class="row col-md-12">
+                        <div class="col-md-3">
+                            <label>
+                                @dis.Name
+                            @if (dis.IsMarket && dis.Address != null)
+                            {
+                                @(", " + dis.Address.City + ", " + @dis.Address.Street + "" + @dis.Address.BuildingNumber + ", " + @dis.Address.PostCode)
+                            }
+                        </label>
+                    </div>
+                    <div class="col-md-2">
+                        @dis.Percent %
+                    </div>
+                    <div class="col-md-7">
+                        @if (dis.Groups != null && dis.Groups.Count > 0)
+                        {
+                            foreach (webapp.Models.ViewModels.ViewManGroup g in dis.Groups)
+                            {
+                                if (g.Manufacturers != null)
+                                {
+                                    foreach (webapp.Models.ViewModels.ViewManufacturer m in g.Manufacturers)
+                                    {
+                                        <div class="row col-md-12">
+                                            <div class="col-md-1"></div>
+                                            <div class="col-md-6">
+                                                @m.Name
+                                            </div>
+                                            <div class="col-md-4">
+                                                @m.Percent %
+                                            </div>
+                                        </div>
+                                    }
+                                }
+                            }
+                        }
+                    </div>
+                    @if (dis.Groups != null && dis.Groups.Count > 0)
+                    {
+                        <div class="row col-md-12">
+                            <div class="col-md-12"><b>SUMA</b></div>
+                        </div>
+                    }
+                    @if (dis.Groups != null && dis.Groups.Count > 0)
+                    {
+                        foreach (webapp.Models.ViewModels.ViewManGroup g in dis.Groups)
+                        {
+                            <div class="row col-md-12">
+                                <div class="col-md-6"></div>
+                                <div class="col-md-3">
+                                    <label>Grupa @g.Name</label>
+                                </div>
+                                <div class="col-md-3">
+                                    @g.Percent %
+                                </div>
+                            </div>
+                        }
+                    }
+                    @if (dis.Manufacturers != null && dis.Manufacturers.Count > 0)
+                    {
+                        foreach (webapp.Models.ViewModels.ViewManufacturer m in dis.Manufacturers)
+                        {
+                            <div class="row col-md-12">
+                                <div class="col-md-10">
+                                    @m.Name
+                                </div>
+                                <div class="col-md-2">
+                                    @m.Percent %
+                                </div>
+                            </div>
+                        }
+                    }
+                </div>
+                }
+            }
+
+            @if (Model.Assortment != null)
+            {
+                <div class="row col-md-12">
+                    <div class="col-md-6">
+                        <label>Roczne zapotrzebowanie na cement</label>
+                    </div>
+                    <div class="col-md-6">
+                        @(!Model.Assortment.AnnualNone ? Model.Assortment.AnnualNeed.ToString() : "Brak danych")
+                    </div>
+                </div>
+
+                <div class="row col-md-12">
+                    <div class="col-md-6">
+                        <label>Udział cementu w obrocie rocznym ( % )</label>
+                    </div>
+                    <div class="col-md-6">
+                        @Model.Assortment.PartOfCement.Name
+                    </div>
+                </div>
+
+                <div class="row col-md-12">
+                    <div class="col-md-6">
+                        <label>Rodziaj opakownia</label>
+                    </div>
+                    <div class="col-md-6">
+                        @Model.Assortment.Package.Name
+                    </div>
+                </div>
+
+                if (Model.Assortment.PackageId == 3)
+                {
+                    <div class="row col-md-12">
+                        <div class="col-md-6">
+                            <label>Jaki procent cementu stanowi luz</label>
+                        </div>
+                        <div class="col-md-6">
+                            @Model.Assortment.LaxCementPercent %
+                        </div>
+                    </div>
+                }
+
+                <div class="row col-md-12">
+                    <div class="col-md-6">
+                        <label>Własna marka na worku</label>
+                    </div>
+                    <div class="col-md-6">
+                        @Model.Assortment.CustomBrand
+                    </div>
+                </div>
+
+                <div class="row col-md-12">
+                    <div class="col-md-6">
+                        <label>Wspólne działania marketingowe</label>
+                    </div>
+                    <div class="col-md-6">
+                        @Model.Assortment.CommonMarketing
+                    </div>
+                </div>
+
+                <div class="row col-md-12">
+                    <div class="col-md-6">
+                        <label>Serwis doradczy</label>
+                    </div>
+                    <div class="col-md-6">
+                        @Model.Assortment.AdvisoryService
+                    </div>
+                </div>
+
+                <div class="row col-md-12">
+                    <div class="col-md-6">
+                        <label>Świeży cement</label>
+                    </div>
+                    <div class="col-md-6">
+                        @Model.Assortment.FreshCement
+                    </div>
+                </div>
+
+                <div class="row col-md-12">
+                    <div class="col-md-6">
+                        <label>Bezkosztowa reklamacja</label>
+                    </div>
+                    <div class="col-md-6">
+                        @Model.Assortment.CostlessComplaint
+                    </div>
+                </div>
+
+                <div class="row col-md-12">
+                    <div class="col-md-6">
+                        <label>Inne</label>
+                    </div>
+                    <div class="col-md-6">
+                        @Model.Assortment.Others
+                    </div>
+                </div>
+
+                <div class="row col-md-12">
+                    <div class="col-md-6">
+                        <label>Co ma wpływ na wybór dostawcy cementu</label>
+                    </div>
+                    <div class="col-md-6">
+                        @Model.Assortment.AffectTheChoice
+                    </div>
+                </div>
+
+                <div class="row col-md-12">
+                    <div class="col-md-6">
+                        <label>Uwagi dotyczące jakości</label>
+                    </div>
+                    <div class="col-md-6">
+                        @Model.Assortment.QualityComments
+                    </div>
+                </div>
+
+                <div class="row col-md-12">
+                    <div class="col-md-6">
+                        <label>Siła marki</label>
+                    </div>
+                    <div class="col-md-6">
+                        @(Model.Assortment.BrandPowerId == 1 ? "Nie ma znaczenia" : "")
+                        @(Model.Assortment.BrandPowerId == 2 ? "Na równi z innymi" : "")
+                        @(Model.Assortment.BrandPowerId == 3 ? "Ma przewagę" : "")
+                    </div>
+                </div>
+            }
+            @if (Model.VisitLaxTypes != null)
+            {
+                <div class="row col-md-12">
+                    <div class="col-md-12">
+                        <label>Rodzaje stosowanego cementu luz:</label>
+                    </div>
+                </div>
+
+                foreach (webapp.Models.VisitLaxType t in Model.VisitLaxTypes)
+                {
+                    <div class="row col-md-12">
+                        <div class="col-md-6">
+                            @t.LaxType.Name
+                        </div>
+                        <div class="col-md-6">
+                            @t.Percent %
+                        </div>
+                    </div>
+                }
+            }
+
+            @if (Model.VisitLaxTypes != null)
+            {
+                <div class="row col-md-12">
+                    <div class="col-md-12">
+                        <label>Rodzaje stosowanego cementu worek:</label>
+                    </div>
+                </div>
+
+                foreach (webapp.Models.VisitPackedType t in Model.VisitPackedTypes)
+                {
+                    <div class="row col-md-12">
+                        <div class="col-md-6">
+                            @t.PackedType.Name;
+                        </div>
+                        <div class="col-md-6">
+                            @t.Percent %
+                        </div>
+                    </div>
+                }
+            }
+            @if (Model.Logistic != null)
+            {
+                <div class="row col-md-12">
+                    <div class="col-md-6">
+                        <label>Liczba silosów</label>
+                    </div>
+                    <div class="col-md-6">
+                        @(Model.Logistic != null ? Model.Logistic.NumberOfSilos.ToString() : "")
+                    </div>
+                </div>
+
+                <div class="row col-md-12">
+                    <div class="col-md-6">
+                        <label>Pojemność silosów</label>
+                    </div>
+                    <div class="col-md-6">
+                        @(Model.Logistic != null ? Model.Logistic.CapacitySilos.ToString() : "")
+                    </div>
+                </div>
+
+                <div class="row col-md-12">
+                    <div class="col-md-6">
+                        <label>Pojemność magazynu cementu (zadaszony)</label>
+                    </div>
+                    <div class="col-md-6">
+                        @Model.Logistic.CoveredMagazineCapacity
+                    </div>
+                </div>
+
+                <div class="row col-md-12">
+                    <div class="col-md-6">
+                        <label>Pojemność magazynu cementu (plac)</label>
+                    </div>
+                    <div class="col-md-6">
+                        @Model.Logistic.NotCoveredMagazineCapacity
+                    </div>
+                </div>
+
+                <div class="row col-md-12">
+                    <div class="col-md-6">
+                        <label>Dostęp do bocznicy kolejowej czynnej</label>
+                    </div>
+                    <div class="col-md-6">
+                        @ViewBag.YesNo[Model.Logistic.RailwaySiding - 1]
+                    </div>
+                </div>
+                if (Model.Logistic.ReceiveCementByRailwaySiding != null)
+                {
+                    <div class="row col-md-12">
+                        <div class="col-md-6">
+                            <label>Czy odbierał cement transportem kolejowym</label>
+                        </div>
+                        <div class="col-md-6">
+                            @ViewBag.YesNo[Model.Logistic.RailwaySiding - 1]
+                        </div>
+                    </div>
+                }
+
+                <div class="row col-md-12">
+                    <div class="col-md-6">
+                        <label>Czy posiada własne cementowozy?</label>
+                    </div>
+                    <div class="col-md-6">
+                        @ViewBag.YesNo[Model.Logistic.OwnCementTank - 1]
+                    </div>
+                </div>
+
+                <div class="row col-md-12">
+                    <div class="col-md-6">
+                        <label>Liczba cementowozów</label>
+                    </div>
+                    <div class="col-md-6">
+                        @Model.Logistic.NumberOwnCementTank
+                    </div>
+                </div>
+
+                <div class="row col-md-12">
+                    <div class="col-md-6">
+                        <label>Czy posiada własne samochody typu platforma</label>
+                    </div>
+                    <div class="col-md-6">
+                        @ViewBag.YesNo[Model.Logistic.OwnPlatformTypeCar - 1]
+                    </div>
+                </div>
+
+                <div class="row col-md-12">
+                    <div class="col-md-6">
+                        <label>Liczba samochodów typu platforma</label>
+                    </div>
+                    <div class="col-md-6">
+                        @Model.Logistic.NumberOwnPlatformTypeCar
+                    </div>
+                </div>
+
+                <div class="row col-md-12">
+                    <div class="col-md-6">
+                        <label>Czy posiada własne samochody typu HDS</label>
+                    </div>
+                    <div class="col-md-6">
+                        @ViewBag.YesNo[Model.Logistic.OwnHDSTypeCar - 1]
+                    </div>
+                </div>
+
+                <div class="row col-md-12">
+                    <div class="col-md-6">
+                        <label>Liczba samochodów typu HDS</label>
+                    </div>
+                    <div class="col-md-6">
+                        @Model.Logistic.NumberOwnHDSTypeCar
+                    </div>
+                </div>
+
+
+
+                <div class="row col-md-12">
+                    <div class="col-md-6">
+                        <label>Czy posiada licencję na przewóz cementu luzem w kraju?</label>
+                    </div>
+                    <div class="col-md-6">
+                        @ViewBag.YesNo[Model.Logistic.CountryLicense - 1]
+                    </div>
+                </div>
+
+                <div class="row col-md-12">
+                    <div class="col-md-6">
+                        <label>Czy posiada licencję na przewóz cementu luzem za granicę?</label>
+                    </div>
+                    <div class="col-md-6">
+                        @ViewBag.YesNo[Model.Logistic.AbroadLicense - 1]
+                    </div>
+                </div>
+
+                <div class="row col-md-12">
+                    <div class="col-md-6">
+                        <label>Luz (27 ton)</label>
+                    </div>
+                    <div class="col-md-6">
+                        @ViewBag.YesNo[Model.Logistic.LaxDelivery - 1]
+                    </div>
+                </div>
+
+                <div class="row col-md-12">
+                    <div class="col-md-6">
+                        <label>Max ilość dostawy</label>
+                    </div>
+                    <div class="col-md-6">
+                        @Model.Logistic.MaxLaxDelivery
+                    </div>
+                </div>
+
+                <div class="row col-md-12">
+                    <div class="col-md-6">
+                        <label>Worek (27 ton)</label>
+                    </div>
+                    <div class="col-md-6">
+                        @ViewBag.YesNo[Model.Logistic.PackedDelivery - 1]
+                    </div>
+                </div>
+
+                <div class="row col-md-12">
+                    <div class="col-md-6">
+                        <label>Max ilość dostawy</label>
+                    </div>
+                    <div class="col-md-6">
+                        @Model.Logistic.MaxPackedDelivery
+                    </div>
+                </div>
+
+                <div class="row col-md-12">
+                    <div class="col-md-12">
+                        <label>Typ rozładunku:</label>
+                    </div>
+                </div>
+
+                foreach (string t in Model.UnloadTypes)
+                {
+                    <div class="row col-md-12">
+                        <div class="col-md-6">
+                            @t;
+                        </div>
+                    </div>
+                }
+            }
+            <div class="row col-md-12">
+                <div class="col-md-6">
+                    <label>Obrót roczny</label>
+                </div>
+                <div class="col-md-6">
+                    @(Model.Step5 != null ? Model.Step5.Annual.ToString() : "") zł
+                </div>
+            </div>
+
+            <div class="row col-md-12">
+                <div class="col-md-12">
+                    <label>Obsługiwani klienci:</label>
+                </div>
+            </div>
+            @if (Model.Clients != null)
+            {
+                foreach (var t in Model.Clients)
+                {
+                    <div class="row col-md-12">
+                        <div class="col-md-6">
+                            @t.Key
+                        </div>
+                        <div class="col-md-6">
+                            @t.Value.ToString() %
+                        </div>
+                    </div>
+                }
+            }
+
+            @if (Model.Step6 != null)
+            {
+                <div class="row col-md-12">
+                    <div class="col-md-6">
+                        <label>Laboratorium własne</label>
+                    </div>
+                    <div class="col-md-6">
+                        @ViewBag.YesNo[Model.Step6.OwnLaboratory - 1]
+                    </div>
+                </div>
+
+                <div class="row col-md-12">
+                    <div class="col-md-6">
+                        <label>Laboratorium obce</label>
+                    </div>
+                    <div class="col-md-6">
+                        @ViewBag.YesNo[Model.Step6.ForeignLaboratory - 1]
+                    </div>
+                </div>
+
+                if (Model.Step6.ForeignLaboratories != null)
+                {
+                    <div class="row col-md-12">
+                        <div class="col-md-12">
+                            <label>Laboratoria obce:</label>
+                        </div>
+                    </div>
+
+                    <div class="row col-md-12">
+                        <div class="col-md-5">
+                            <label>Nazwa</label>
+                        </div>
+                        <div class="col-md-4">
+                            <label>Roczna kwota na obsługę</label>
+                        </div>
+                        <div class="col-md-3">
+                            <label>Barter</label>
+                        </div>
+                    </div>
+
+                    foreach (webapp.Models.ForeignLaboratoryInfo t in Model.Step6.ForeignLaboratories)
+                    {
+                        <div class="row col-md-12">
+                            <div class="col-md-5">
+                                @t.Name
+                            </div>
+                            <div class="col-md-4">
+                                @t.AnnualAmount
+                            </div>
+                            <div class="col-md-3">
+                                @(t.Barter ? "Tak" : "Nie")
+                            </div>
+                        </div>
+                    }
+                }
+            }
+
+            <div class="row col-md-12">
+                <div class="col-md-12">
+                    <label>Ceny zakupu/sprzedaży klienta - luz:</label>
+                </div>
+            </div>
+
+            <div class="row col-md-12">
+                <div class="col-md-4">
+                    <label>Nazwa</label>
+                </div>
+                <div class="col-md-3">
+                    <label>Cena zakupu</label>
+                </div>
+                <div class="col-md-2">
+                    <label>Typ</label>
+                </div>
+                <div class="col-md-3">
+                    <label>Cena sprzedaży</label>
+                </div>
+            </div>
+            @if (Model.LaxPrices != null)
+            {
+                foreach (webapp.Models.ViewModels.ViewPrice t in Model.LaxPrices)
+                {
+                    <div class="row col-md-12">
+                        <div class="col-md-4">
+                            @t.Name
+                        </div>
+                        <div class="col-md-3">
+                            @t.Buy
+                        </div>
+                        <div class="col-md-2">
+                            @t.Type
+                        </div>
+                        <div class="col-md-3">
+                            @t.Sell
+                        </div>
+                    </div>
+                }
+            }
+            <div class="row col-md-12">
+                <div class="col-md-12">
+                    <label>Ceny zakupu/sprzedaży klienta - worek:</label>
+                </div>
+            </div>
+
+            <div class="row col-md-12">
+                <div class="col-md-4">
+                    <label>Nazwa</label>
+                </div>
+                <div class="col-md-3">
+                    <label>Cena zakupu</label>
+                </div>
+                <div class="col-md-2">
+                    <label>Typ</label>
+                </div>
+                <div class="col-md-3">
+                    <label>Cena sprzedaży</label>
+                </div>
+            </div>
+
+            @if (Model.PackedPrices != null)
+            {
+                foreach (webapp.Models.ViewModels.ViewPrice t in Model.PackedPrices)
+                {
+                    <div class="row col-md-12">
+                        <div class="col-md-4">
+                            @t.Name
+                        </div>
+                        <div class="col-md-3">
+                            @t.Buy
+                        </div>
+                        <div class="col-md-2">
+                            @t.Type
+                        </div>
+                        <div class="col-md-3">
+                            @t.Sell
+                        </div>
+                    </div>
+                }
+            }
+            @if (Model.Step8 != null && Model.Step8.Notes != null)
+            {
+                <div class="row col-md-12">
+                    <div class="col-md-12">
+                        <label>Notatki:</label>
+                    </div>
+                </div>
+
+                foreach (webapp.Models.Note t in Model.Step8.Notes)
+                {
+                    <div class="row col-md-12">
+                        <div class="col-md-2"></div>
+                        <div class="col-md-10">
+                            @t.Text
+                        </div>
+                    </div>
+                }
+            }
+
+        </div>
+    </div>
+    <div class="col-md-2"></div>
+</div>

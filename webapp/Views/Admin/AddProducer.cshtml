@@ -1,0 +1,42 @@
+﻿@model webapp.Models.Producer
+
+@{
+    ViewBag.Title = "Nowa cementownia";
+}
+
+@using (Html.BeginForm())
+{
+    <div class="row">
+        <div class="col-md-2"></div>
+        <div class="col-md-8">
+            <div class="row">
+                <h3 class="text-center">Nowa cementownia</h3>
+            </div>
+            <table class="table">
+                <tr>
+                    <td><label for="Name">Nazwa</label></td>
+                    <td>
+                        @Html.TextBoxFor(model => model.Name)
+                    </td>
+                </tr>
+                <tr>
+                    <td><label for="Name">Jest firmą krajową?</label></td>
+                    <td>
+                        <select name="Country">
+                            <option value="true">Tak</option>
+                            <option value="false">Nie</option>
+                        </select>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-2"></div>
+        <div class="col-md-8">
+            <button type="submit" class="btn btn-primary btn-block">Zapisz</button>
+        </div>
+        <div class="col-md-2"></div>
+    </div>
+}

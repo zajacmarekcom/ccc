@@ -1,0 +1,143 @@
+﻿@model webapp.Models.MarketAddress
+
+@{
+    ViewBag.Title = "AddMarketAddress";
+}
+
+<h2>Nowy adres marketu</h2>
+<p class="text-right">
+    @Html.ActionLink("Wróć", "DistributorDetails", new { controller = "Admin", id = Model.DistributorId }, new { @class = "btn btn-default" })
+</p>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    <div class="row">
+        <div class="col-md-2"></div>
+        <div class="panel panel-default col-md-8">
+            <div class="panel-heading">
+                <h3 class="panel-title">Dane klienta</h3>
+            </div>
+            <div class="panel-body">
+                @Html.HiddenFor(model => model.DistributorId)
+
+                <div class="row form-group">
+                    <div class="col-md-4">
+                        Numer budynku
+                    </div>
+                    <div class="col-md-8">
+                        @Html.TextBoxFor(model => model.BuildingNumber, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.BuildingNumber)
+                    </div>
+                </div>
+
+                <div class="row form-group">
+                    <div class="col-md-4">
+                        Ulica
+                    </div>
+                    <div class="col-md-8">
+                        @Html.TextBoxFor(model => model.Street, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.Street)
+                    </div>
+                </div>
+
+                <div class="row form-group">
+                    <div class="col-md-4">
+                        Kod pocztowy
+                    </div>
+                    <div class="col-md-8">
+                        @Html.TextBoxFor(model => model.PostCode, new { @class = "form-control", placeholder = "XX-XXX" })
+                        @Html.ValidationMessageFor(model => model.PostCode)
+                    </div>
+                </div>
+
+                <div class="row form-group">
+                    <div class="col-md-4">
+                        Województwo
+                    </div>
+                    <div class="col-md-8">
+                        <select id="ProvinceId" name="ProvinceId" class="form-control">
+                            <option value="">Wybierz...</option>
+                            @foreach (webapp.Models.Province p in ViewBag.Data.Provinces)
+                            {
+                                <option value="@p.Id" @(Model != null && Model.ProvinceId == p.Id ? "selected" : "")>@p.Name</option>
+                            }
+                        </select>
+                        @Html.ValidationMessageFor(model => model.ProvinceId)
+                    </div>
+                </div>
+                <div id="districtDiv" class="row form-group @(Model != null ? "" : "hidden")">
+                    <div class="col-md-4">
+                        Powiat
+                    </div>
+                    <div class="col-md-8">
+                        <select id="DistrictId" name="DistrictId" class="form-control">
+                            <option value="">Wybierz...</option>
+                            @if (Model != null)
+                            {
+                                foreach (webapp.Models.District p in ViewBag.Data.Districts)
+                                {
+                                    <option value="@p.Id" @(Model != null && Model.DistrictId == p.Id ? "selected" : "")>@p.Name</option>
+                                }
+                            }
+                        </select>
+                        @Html.ValidationMessageFor(model => model.DistrictId)
+                    </div>
+                </div>
+
+                <div id="cityDiv" class="row form-group @(Model != null ? "" : "hidden")">
+                    <div class="col-md-4">
+                        Miasto
+                    </div>
+                    <div class="col-md-8">
+                        @Html.TextBoxFor(model => model.City, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.City)
+                    </div>
+                </div>
+
+                <p>
+                    <input class="btn btn-primary form-control" type="submit" value="Dodaj" />
+                </p>
+            </div>
+        </div>
+        <div class="col-md-2"></div>
+    </div>
+}
+
+<script>
+    $("#ProvinceId").on("change", function () {
+        $("#DistrictId").html("");
+        $("#DistrictId").html("<option value='0'>Wybierz...</option>");
+        if (this.value == 0) {
+            if (!$("#districtDiv").hasClass("hidden")) {
+                $("#districtDiv").addClass("hidden");
+            }
+            if (!$("#cityDiv").hasClass("hidden")) {
+                $("#cityDiv").addClass("hidden");
+                $("#City").val("");
+            }
+        }
+        else {
+            $.getJSON("/Data/Districts/" + $("#ProvinceId").val(), function (data) {
+                $.each(data, function (index, val) {
+                    $("#DistrictId").append("<option value='" + val.Id + "' >" + val.Name + "</option>");
+                });
+            });
+            $("#districtDiv").removeClass("hidden");
+        }
+    });
+
+    $("#DistrictId").on("change", function () {
+        if (this.value == 0) {
+            if (!$("#cityDiv").hasClass("hidden")) {
+                $("#cityDiv").addClass("hidden");
+                $("#City").val("");
+            }
+        }
+        else {
+            $("#cityDiv").removeClass("hidden");
+        }
+    });
+</script>

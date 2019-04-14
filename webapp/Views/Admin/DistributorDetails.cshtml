@@ -1,0 +1,85 @@
+﻿@model webapp.Models.Distributor
+
+@{
+    ViewBag.Title = "Dystrybutor";
+}
+
+<div class="row">
+    <div class="col-md-3"></div>
+    <div class="panel panel-default col-md-6">
+        <div class="panel-heading">
+            <h3 class="panel-title">Dystrybutor - @Model.Name</h3>
+        </div>
+        <div class="panel-body">
+            <table class="table">
+                <tr>
+                    <td>Nazwa</td>
+                    <td>@Model.Name</td>
+                </tr>
+                <tr>
+                    <td>Ulica</td>
+                    <td>@Model.Street</td>
+                </tr>
+                <tr>
+                    <td>Numer budynku</td>
+                    <td>@Model.BuildingNumber</td>
+                </tr>
+                <tr>
+                    <td>Miasto</td>
+                    <td>@Model.City</td>
+                </tr>
+                <tr>
+                    <td>Kod pocztowy</td>
+                    <td>@Model.PostCode</td>
+                </tr>
+                <tr>
+                    <td>NIP</td>
+                    <td>@Model.NIP</td>
+                </tr>
+                <tr>
+                    <td>Jest siecią marketów?</td>
+                    <td>@(Model.IsMarket ? "Tak" : "Nie")</td>
+                    <td>
+                        @using(Html.BeginForm("ChangeMarket", "Admin", new { distributorId = Model.Id}, FormMethod.Post))
+                        {
+                            <button type="submit" class="btn btn-default">Zmień</button>
+                        }
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="col-md-3"></div>
+</div>
+
+@if(Model.IsMarket)
+{
+    <div class="row">
+        <div class="col-md-4"></div>
+        <div class="col-md-4">@Html.ActionLink("Dodaj adres marketu", "AddMarketAddress", new { controller = "Admin", id = Model.Id}, new { @class = "btn btn-default btn-block"})</div>
+        <div class="col-md-4"></div>
+    </div>
+    <div class="row">
+    <div class="col-md-3"></div>
+    <div class="panel panel-default col-md-6">
+        <div class="panel-heading">
+            <h3 class="panel-title">Markety</h3>
+        </div>
+        <div class="panel-body">
+            <table class="table table-hover">
+                <tr>
+                    <td><strong>Miasto, ulica, numer budynku, kod pocztowy, województwo, powiat</strong></td>
+                </tr>
+                @foreach (var item in Model.MarketAddresses)
+                {
+                    <tr>
+                        <td>@item.City, @item.Street @item.BuildingNumber, @item.PostCode, @item.Province.Name, @item.District.Name</td>
+                    </tr>
+                }
+            </table>
+
+        </div>
+    </div>
+    <div class="col-md-3"></div>
+</div>
+}

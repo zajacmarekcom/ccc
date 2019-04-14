@@ -1,0 +1,461 @@
+﻿@using webapp.Models
+@model webapp.Models.ViewModels.NewVisitStep1
+
+@{
+    ViewBag.Title = "Nowa wizyta";
+    var branchesCount = 0;
+}
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    <input type="hidden" name="Visit.BusinessId" value="@ViewBag.BusinessId" />
+    <input type="hidden" name="Visit.Id" value="@(Model != null ? Model.Visit.Id.ToString() : "0")" />
+
+    <div class="row">
+        <div class="col-md-2"></div>
+        <div class="panel panel-default col-md-8">
+            <div class="panel-heading">
+                <h3 class="panel-title">Wizyta</h3>
+            </div>
+            <div class="panel-body">
+                <div class="row form-group">
+                    <div class="col-md-4">
+                        @Html.LabelFor(model => model.Visit.VisitDate)
+                    </div>
+                    <div class="col-md-8">
+                        <input type="text" name="Visit.VisitDate" class="visitDate form-control" placeholder="Kliknij aby wybrać datę" value="@(Model != null && Model.Visit.VisitDate != null ? Model.Visit.VisitDate.ToString("dd-MM-yyyy") : "")" >
+                        @Html.ValidationMessageFor(model => model.Visit.VisitDate)
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-md-4">
+                        @Html.LabelFor(model => model.Visit.MainMarketSegmentId)
+                    </div>
+                    <div class="col-md-8">
+                        <select name="Visit.MainMarketSegmentId" class="form-control">
+                            @foreach (webapp.Models.MarketSegment segment in ViewBag.MarketSegments)
+                            {
+                                <option value="@segment.Id" @(Model != null && Model.Visit != null && Model.Visit.MainMarketSegmentId == segment.Id ? "selected" : "")>@segment.Name</option>
+                            }
+                        </select>
+                        @Html.ValidationMessageFor(model => model.Visit.MainMarketSegmentId)
+                    </div>
+                </div>
+                @Html.LabelFor(model => model.MarketSegments)
+
+                @for (int i = 0; i < ((List<SelectedMarketSegment>)ViewBag.SelectedSegments).Count; i++)
+                {
+                    var ckd = "";
+                    var disabled = "disabled";
+                    var value = "0";
+                    var id = 0;
+                    if(Model != null)
+                    {
+                        if(Model.MarketSegments.ElementAt(i).Checked)
+                        {
+                            id = Model.MarketSegments.ElementAt(i).EId;
+                            ckd = "checked";
+                            disabled = "";
+                            value = Model.MarketSegments.ElementAt(i).Percent.ToString();
+                        }
+                    }
+                    <div class="col-md-12 row form-group">
+                        <div class="col-md-1">
+                            <input type="hidden" name="MarketSegments[@i].EId" value="@id.ToString()">
+                            <input type="checkbox" value="true" class="segmentCheckbox" name="MarketSegments[@i].Checked" @ckd /><input type="hidden" value="false" name="MarketSegments[@i].Checked" />
+                        </div>
+                        <div class="col-md-7">
+                            <input type="hidden" name="MarketSegments[@i].Id" value="@ViewBag.SelectedSegments[i].Id" />@ViewBag.SelectedSegments[i].Name
+                        </div>
+                        <div class="col-md-3">
+                            <input class="form-control percentBox" type="number" @disabled name="MarketSegments[@i].Percent" value="@value" />
+                        </div>
+                        <div class="col-md-1">
+                            %
+                        </div>
+
+                    </div>
+                }
+                @Html.ValidationMessageFor(model => model.MarketSegments)
+                <div class="form-group">
+                    <div class="col-md-4">
+                        @Html.DisplayNameFor(model => model.Visit.Comments)
+                    </div>
+                    <div class="col-md-8">
+                        @Html.TextAreaFor(model => model.Visit.Comments, new { @class = "col-md-12" })
+                    </div>
+                </div>
+                <h4>Oddziały</h4>
+                <button type="button" class="btn btn-default" onclick="javascript: addBranch();">Dodaj</button>
+                <div class="col-md-12" id="branches">
+                    @if (Model != null && Model.Branches != null)
+                    {
+                        foreach (webapp.Models.Branch b in Model.Branches)
+                        {
+                            <div class='branch'>
+                                <h5 class='text-center'><strong>Oddział</strong></h5>
+                                <div class='row'><div class='col-md-5'></div><div class='col-md-2'><button type='button' class='btn btn-default btn-block' onclick='javascript: removeAjaxBranch(this, @b.Id);'>Usuń</button></div><div class='col-md-5'></div></div>
+                                <div class="row form-group">
+                                    <div class="col-md-4">
+                                        <input type="hidden" name="Branches[@branchesCount].Id" value="@b.Id" />
+                                        <input type="hidden" name="Branches[@branchesCount].Used" value="@(b.Used ? "true" : "false")" />
+                                        <label for="Branches[@branchesCount].Name">Nazwa</label>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <input type="text" name="Branches[@branchesCount].Name" class="form-control" value="@b.Name" />
+                                    </div>
+                                </div>
+                                <div class="row form-group">
+                                    <div class="col-md-4">
+                                        <label for="Branches[@branchesCount].Street">Ulica</label>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <input type="text" name="Branches[@branchesCount].Street" class="form-control" value="@b.Street" />
+                                    </div>
+                                </div>
+                                <div class="row form-group">
+                                    <div class="col-md-4">
+                                        <label for="Branches[@branchesCount].BuildingNumber">Numer budynku</label>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <input type="text" name="Branches[@branchesCount].BuildingNumber" class="form-control" value="@b.BuildingNumber" />
+                                    </div>
+                                </div>
+                                <div class="row form-group">
+                                    <div class="col-md-4">
+                                        <label for="Branches[@branchesCount].PostCode">Kod pocztowy</label>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <input type="text" name="Branches[@branchesCount].PostCode" class="form-control" placeholder="XX-XXX" value="@b.PostCode" />
+                                    </div>
+                                </div>
+                                <div class="row form-group">
+                                    <div class="col-md-4">
+                                        <label for="Branches[@branchesCount].ProvinceId">Województwo</label>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <select name="Branches[@branchesCount].ProvinceId" class="form-control provinces">
+                                            <option value='0'>Wybierz...</option>";
+                                            @foreach (webapp.Models.Province p in ViewBag.Provinces)
+                                            {
+                                                <option value="@p.Id" @(p.Id == b.ProvinceId ? "selected" : "")>@p.Name</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row form-group @(b.ProvinceId == 0 ? "hidden":"") districtdiv">
+                                    <div class="col-md-4">
+                                        <label for="Branches[@branchesCount].DistrictId">Powiat</label>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <select name="Branches[@branchesCount].DistrictId" class="form-control district">
+                                            <option value='0'>Wybierz...</option>
+                                            @foreach (webapp.Models.District d in ViewBag.Districts)
+                                            {
+                                                if (d.ProvinceId == b.ProvinceId)
+                                                {
+                                                    <option value="@d.Id" @(d.Id == b.DistrictId ? "selected" : "")>@d.Name</option>
+                                                }
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row form-group citydiv @(b.DistrictId == 0 ? "hidden":"")">
+                                    <div class="col-md-4">
+                                        <label for="Branches[@branchesCount].City">Miasto</label>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <input type="text" name="Branches[@branchesCount].City" class="form-control city" value="@b.City" />
+                                    </div>
+                                </div>
+                                <div class="row form-group">
+                                    <div class="col-md-4">
+                                        <label for="Branches[@branchesCount].PhoneNumber">Numer telefonu</label>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <input type="text" name="Branches[@branchesCount].PhoneNumber" class="form-control" value="@b.PhoneNumber" />
+                                    </div>
+                                </div>
+                                <div class="row form-group">
+                                    <div class="col-md-4">
+                                        <label for="Branches[@branchesCount].Email">Adres e-mail</label>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <input type="text" name="Branches[@branchesCount].Email" class="form-control" value="@b.Email" />
+                                    </div>
+                                </div>
+                                <div class="row form-group">
+                                    <div class="col-md-4">
+                                        <label for="Branches[@branchesCount].Trades">Firma handluje cementem</label>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <select name="Branches[@branchesCount].Trades" class="form-control">
+                                            <option value="false" @(!b.Trades ? "selected" : "")>Nie</option>
+                                            <option value="true" @(b.Trades ? "selected" : "")>Tak</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row form-group">
+                                    <div class="col-md-4">
+                                        <label for="Branches[@branchesCount].Trades">Zleć użytkownikowi</label>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <select name="Branches[@branchesCount].UserId" class="form-control">
+                                            <option value="" @(!(b.UserId == null) ? "selected" : "")>Wybierz...</option>
+                                            @foreach(var user in ViewBag.Users)
+                                            {
+                                                <option value="@user.Id" @(b.UserId != null && b.UserId == user.Id ? "selected" : "")>@user.FirstName @user.LastName</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            branchesCount++;
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2"></div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-2"></div>
+        <div class="col-md-8">
+            <button type="submit" class="btn btn-primary btn-block">Dalej</button>
+        </div>
+        <div class="col-md-2"></div>
+    </div>
+
+
+}
+<script>
+    function msie() {
+
+        var ua = window.navigator.userAgent;
+        var msie = ua.indexOf("MSIE ");
+
+        if (msie > 0 || !!navigator.userAgent.match(/Trident.*rv\:11\./))      // If Internet Explorer, return version number
+            return true
+
+        return false;
+    }
+
+    var branchesCounter = @branchesCount;
+
+    function addBranch() {
+        var html = "<div class='branch'><h5 class='text-center' ><strong>Oddział</strong></h5>" +
+            "<div class='row'><div class='col-md-5'></div><div class='col-md-2'><button type='button' class='btn btn-default btn-block' onclick='javascript: removeBranch(this);' >Usuń</button></div><div class='col-md-5'></div></div>" +
+            "<div class=\"row form-group\">" +
+                    "<div class=\"col-md-4\">" +
+                        "<input type=\"hidden\" name=\"Branches[" + branchesCounter + "].Used\" value=\"false\" />" +
+                        "<label for=\"Branches[" + branchesCounter + "].Name\" >Nazwa</label>" +
+                    "</div>" +
+                    "<div class=\"col-md-8\">" +
+                        "<input type=\"text\" name=\"Branches[" + branchesCounter + "].Name\" class=\"form-control\" />" +
+                    "</div>" +
+                "</div>" +
+        "<div class=\"row form-group\">" +
+                    "<div class=\"col-md-4\">" +
+                        "<label for=\"Branches[" + branchesCounter + "].Street\" >Ulica</label>" +
+                    "</div>" +
+                    "<div class=\"col-md-8\">" +
+                        "<input type=\"text\" name=\"Branches[" + branchesCounter + "].Street\" class=\"form-control\" />" +
+                    "</div>" +
+                "</div>" +
+                "<div class=\"row form-group\">" +
+                    "<div class=\"col-md-4\">" +
+                        "<label for=\"Branches[" + branchesCounter + "].BuildingNumber\" >Numer budynku</label>" +
+                    "</div>" +
+                    "<div class=\"col-md-8\">" +
+                        "<input type=\"text\" name=\"Branches[" + branchesCounter + "].BuildingNumber\" class=\"form-control\" />" +
+                    "</div>" +
+                "</div>" +
+                "<div class=\"row form-group\">" +
+                    "<div class=\"col-md-4\">" +
+                        "<label for=\"Branches[" + branchesCounter + "].PostCode\" >Kod pocztowy</label>" +
+                    "</div>" +
+                    "<div class=\"col-md-8\">" +
+                        "<input type=\"text\" name=\"Branches[" + branchesCounter + "].PostCode\" class=\"form-control\" placeholder=\"XX-XXX\" />" +
+                    "</div>" +
+                "</div>" +
+                "<div class=\"row form-group\">" +
+                    "<div class=\"col-md-4\">" +
+                        "<label for=\"Branches[" + branchesCounter + "].ProvinceId\" >Województwo</label>" +
+                    "</div>" +
+                    "<div class=\"col-md-8\">" +
+                        "<select name=\"Branches[" + branchesCounter + "].ProvinceId\" class=\"form-control provinces\" >" +
+                            "<option value='0'>Wybierz...</option>";
+        @foreach(webapp.Models.Province p in ViewBag.Provinces)
+                            {
+                                @Html.Raw("html += \"<option value='" + @p.Id + "'>" + @p.Name + "</option>\";\n")
+                            }
+        html += "</select>" +
+    "</div>" +
+"</div>" +
+"<div class=\"row form-group hidden districtDiv\">" +
+    "<div class=\"col-md-4\">" +
+        "<label for=\"Branches[" + branchesCounter + "].DistrictId\" >Powiat</label>" +
+    "</div>" +
+    "<div class=\"col-md-8\">" +
+        "<select name=\"Branches[" + branchesCounter + "].DistrictId\" class=\"form-control district\" >" +
+            "<option value='0' >Wybierz...</option>" +
+    "</select>" +
+"</div>" +
+"</div>" +
+"<div class=\"row form-group cityDiv hidden\">" +
+    "<div class=\"col-md-4\">" +
+        "<label for=\"Branches[" + branchesCounter + "].City\" >Miasto</label>" +
+    "</div>" +
+    "<div class=\"col-md-8\">" +
+        "<input type=\"text\" name=\"Branches[" + branchesCounter + "].City\" class=\"form-control city\" />" +
+    "</div>" +
+"</div>" +
+"<div class=\"row form-group\">" +
+    "<div class=\"col-md-4\">" +
+        "<label for=\"Branches[" + branchesCounter + "].PhoneNumber\" >Numer telefonu</label>" +
+    "</div>" +
+    "<div class=\"col-md-8\">" +
+        "<input type=\"text\" name=\"Branches[" + branchesCounter + "].PhoneNumber\" class=\"form-control\" />" +
+    "</div>" +
+"</div>" +
+"<div class=\"row form-group\">" +
+    "<div class=\"col-md-4\">" +
+        "<label for=\"Branches[" + branchesCounter + "].Email\" >Adres e-mail</label>" +
+    "</div>" +
+    "<div class=\"col-md-8\">" +
+        "<input type=\"text\" name=\"Branches[" + branchesCounter + "].Email\" class=\"form-control\" />" +
+    "</div>" +
+"</div>" +
+"<div class=\"row form-group\">" +
+    "<div class=\"col-md-4\">" +
+        "<label for=\"Branches[" + branchesCounter + "].Trades\" >Czy jest odbiorcą cementu</label>" +
+    "</div>" +
+    "<div class=\"col-md-8\">" +
+        "<select name=\"Branches[" + branchesCounter + "].Trades\" class=\"form-control\" >" +
+            "<option value=\"false\">Nie dotyczy</option>" +
+            "<option value=\"true\">Dotyczy</option>" +
+        "</select>" +
+    "</div>" +
+  "</div>" +
+    "<div class=\"row form-group\">" +
+        "<div class=\"col-md-4\">" +
+            "<label for=\"Branches[" + branchesCounter + "].UserId\" >Zleć użytkownikowi</label>" +
+        "</div>" +
+        "<div class=\"col-md-8\">" +
+            "<select name=\"Branches[" + branchesCounter + "].UserId\" class=\"form-control\" >" +
+                "<option value=''>Wybierz...</option>" +
+                @foreach(webapp.Models.Users p in ViewBag.Users)
+                {
+                    @Html.Raw("\"<option value='" + @p.Id + "'>" + @p.FirstName + " " + @p.LastName + "</option>\" + \n")
+                }
+           "</select>" +
+        "</div>" +
+    "</div>";
+html += "</div>";
+        branchesCounter++;
+        $("#branches").append(html);
+
+        $(".provinces").on("change", function () {
+            var parent = $(this).parent().parent().parent();
+            $(parent).find(".district").html("");
+            $(parent).find(".district").html("<option value='0'>Wybierz...</option>");
+            if (this.value == 0) {
+                if (!$(parent).find(".districtDiv").hasClass("hidden")) {
+                    $(parent).find(".districtDiv").addClass("hidden");
+                }
+                if (!$(parent).find(".cityDiv").hasClass("hidden")) {
+                    $(parent).find(".cityDiv").addClass("hidden");
+                    $(parent).find(".City").val("");
+                }
+            }
+            else {
+                $.getJSON("/Data/Districts/" + $(this).val(), function (data) {
+                    $.each(data, function (index, val) {
+                        $(parent).find(".district").append("<option value='" + val.Id + "' >" + val.Name + "</option>");
+                    });
+                });
+                $(parent).find(".districtDiv").removeClass("hidden");
+            }
+        });
+
+        $(".district").on("change", function () {
+            var parent = $(this).parent().parent().parent();
+            if (this.value == 0) {
+                if (!$(parent).find(".cityDiv").hasClass("hidden")) {
+                    $(parent).find(".cityDiv").addClass("hidden");
+                    $(parent).find(".city").val("");
+                }
+            }
+            else {
+                $(parent).find(".cityDiv").removeClass("hidden");
+            }
+        });
+    }
+
+    function removeBranch(button) {
+        var parent = button.parentNode.parentNode.parentNode.parentNode;
+        parent.removeChild(button.parentNode.parentNode.parentNode);
+
+        branchesCounter = 0;
+        $(".branch").each(function (i, obj) {
+            $(this).find("input[name]").each(function () {
+                var name = $(this).attr("name");
+                name = name.replace(/\[.*?\]/g, "[" + branchesCounter + "]");
+                $(this).attr("name",name);
+            });
+            $(this).find("select[name]").each(function () {
+                var name = $(this).attr("name");
+                name = name.replace(/\[.*?\]/g, "[" + branchesCounter + "]");
+                $(this).attr("name", name);
+            });
+            branchesCounter++;
+        });
+    }
+
+    function removeAjaxBranch(button, id) {
+        var parent = button.parentNode.parentNode.parentNode.parentNode;
+        parent.removeChild(button.parentNode.parentNode.parentNode);
+
+        branchesCounter = 0;
+        $(".branch").each(function (i, obj) {
+            $(this).find("input[name]").each(function () {
+                var name = $(this).attr("name");
+                name = name.replace(/\[.*?\]/g, "[" + branchesCounter + "]");
+                $(this).attr("name",name);
+            });
+            $(this).find("select[name]").each(function () {
+                var name = $(this).attr("name");
+                name = name.replace(/\[.*?\]/g, "[" + branchesCounter + "]");
+                $(this).attr("name", name);
+            });
+            branchesCounter++;
+        });
+
+        $.get("/Agent/RemoveBranch/" + id, function(data){});
+    }
+
+    $(function () {
+
+        $(".visitDate").datepicker({
+            format: "dd-mm-yyyy",
+            language: "pl",
+            calendarWeeks: true
+        });
+
+        $(".segmentCheckbox").on("change", function () {
+            var percentBox = $(this).parent().parent().find(".percentBox");
+
+            if ($(this).is(":checked")) {
+                if (percentBox.prop("disabled")) {
+                    percentBox.removeAttr("disabled");
+                }
+            }
+            else {
+                percentBox.val(0);
+                percentBox.attr("disabled", true);
+            }
+        });
+    });
+</script>

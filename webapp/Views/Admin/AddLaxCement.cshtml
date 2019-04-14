@@ -1,0 +1,44 @@
+﻿@model webapp.Models.LaxCementType
+
+@{
+    ViewBag.Title = "Nowy cement luz";
+}
+
+@using (Html.BeginForm())
+{
+    <div class="row">
+        <div class="col-md-2"></div>
+        <div class="col-md-8">
+            <div class="row">
+                <h3 class="text-center">Nowy cement luz</h3>
+            </div>
+            <table class="table">
+                <tr>
+                    <td><label for="Name">Nazwa</label></td>
+                    <td>
+                        @Html.TextBoxFor(model => model.Name)
+                    </td>
+                </tr>
+                <tr>
+                    <td><label for="Name">Cementownia</label></td>
+                    <td>
+                        <select name="ProducerId">
+                            @foreach(var item in ViewBag.Producers)
+                            {
+                                <option value="@item.Id">@item.Name</option>
+                            }
+                        </select>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-2"></div>
+        <div class="col-md-8">
+            <button type="submit" class="btn btn-primary btn-block">Zapisz</button>
+        </div>
+        <div class="col-md-2"></div>
+    </div>
+}

@@ -1,0 +1,615 @@
+﻿@using webapp.Models
+@model webapp.Models.ViewModels.NewVisitStep2
+
+@{
+    ViewBag.Title = "Nowa wizyta";
+    var laxCounter = -1;
+    var packedCounter = -1;
+    var val = "0";
+    if (Model != null)
+    {
+        val = Model.Assortment.AnnualNeed.ToString();
+    }
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    <input type="hidden" name="VisitId" value="@ViewBag.VisitId" />
+
+    <div class="row">
+        <div class="col-md-2"></div>
+        <div class="panel panel-default col-md-8">
+            <div class="panel-heading">
+                <h3 class="panel-title">Asortyment</h3>
+            </div>
+            <div class="panel-body">
+
+                <div class="row form-group">
+                    <div class="col-md-4">
+                        @Html.DisplayNameFor(model => model.Assortment.AnnualNeed) 
+                    </div>
+                    <div class="col-md-4">
+                        @Html.TextBoxFor(model => model.Assortment.AnnualNeed, new { @Value = val, @class = "form-control col-md-12", type = "number" })
+                        @Html.ValidationMessageFor(model => model.Assortment.AnnualNeed)
+                    </div>
+                    <div class="col-md-1">
+                        ton
+                    </div>
+                    <div class="col-md-3">
+                        <input type="checkbox" class="annualBox" value="true" name="Assortment.AnnualNone" /><input type="hidden" value="false" name="Assortment.AnnualNone" />Brak danych
+                    </div>
+                </div>
+
+                <div class="row form-group">
+                    <div class="col-md-4">
+                        @Html.DisplayNameFor(model => model.Assortment.PartOfCementId)
+                    </div>
+                    <div class="col-md-7">
+                        <select name="Assortment.PartOfCementId" class="form-control">
+                            @foreach (webapp.Models.PartOfCement part in ViewBag.PartOfCement)
+                            {
+                                <option value="@part.Id" @(Model != null && Model.Assortment.PartOfCementId == part.Id ? "selected" : "")>@part.Name</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-1">
+                        %
+                    </div>
+                </div>
+
+                <div class="row form-group">
+                    <div class="col-md-4">
+                        @Html.DisplayNameFor(model => model.Assortment.PackageId)
+                    </div>
+                    <div class="col-md-7">
+                        <select name="Assortment.PackageId" id="Assortment.PackageId" class="form-control packageId">
+                            @foreach (webapp.Models.KindOfPackage part in ViewBag.KindOfPackage)
+                            {
+                                <option value="@part.Id" @(Model != null && Model.Assortment.PackageId == part.Id ? "selected" : "")>@part.Name</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-1">
+                    </div>
+                </div>
+
+                <div id="laxPercent" class="row form-group @(Model != null && Model.Assortment.PackageId == 3 ? "" : "hidden")">
+                    <div class="col-md-4">
+                        @Html.DisplayNameFor(model => model.Assortment.LaxCementPercent)
+                    </div>
+                    <div class="col-md-8">
+                        @Html.TextBoxFor(model => model.Assortment.LaxCementPercent, new { @class = "form-control col-md-12", @Value = Model != null && Model.Assortment != null ? Model.Assortment.LaxCementPercent : 0, type = "number" })
+                        @Html.ValidationMessageFor(model => model.Assortment.AnnualNeed)
+                    </div>
+                </div>
+                <div id="laxCementTypes" class="@(Model == null || Model.Assortment.PackageId == 1 || Model.Assortment.PackageId == 3 ? "" : "hidden")">
+                    <div class="row form-group">
+                        <div class="col-md-12">
+                            <h4>Rodzaje stosowanego cementu luz:</h4>
+                        </div>
+                    </div>
+                    <div id="laxList">
+                        @for (int i = 0; i < ViewBag.LaxTypes.Count; i++)
+                        {
+                            var ckd = "";
+                            var v = "0";
+                            var disabled = "disabled";
+                            if (Model != null && Model.LaxTypes != null)
+                            {
+                                SelectedLaxCementType lax = null;
+                                foreach (var laxType in Model.LaxTypes)
+                                {
+                                    if (laxType.Id == ViewBag.LaxTypes[i].Id)
+                                    {
+                                        lax = laxType;
+                                        break;
+                                    }
+
+                                }
+                                if (lax != null)
+                                {
+                                    if (lax.Checked)
+                                    {
+                                        ckd = "checked";
+                                        v = lax.Percent.ToString();
+                                        disabled = "";
+                                    }
+                                    string producer = "";
+                                    foreach (var p in ViewBag.LaxProducers)
+                                    {
+                                        if (ViewBag.LaxTypes[i].ProducerId == p.Id)
+                                        {
+                                            producer = p.Name;
+                                            break;
+                                        }
+                                    }
+                                    if (producer != "")
+                                    {
+                                        laxCounter++;
+                                        <div class="col-md-12 row form-group lax">
+                                            <div class="col-md-1">
+                                                <input type="checkbox" value="true" @ckd class="laxCheckbox" name="LaxTypes[@laxCounter].Checked" /><input type="hidden" value="false" name="LaxTypes[@laxCounter].Checked" />
+                                            </div>
+                                            <div class="col-md-6">
+                                                <input type="hidden" name="LaxTypes[@laxCounter].Name" value="@lax.Name" />
+                                                <input type="hidden" name="LaxTypes[@laxCounter].Id" value="@lax.Id" />@producer @lax.Name
+                                            </div>
+                                            <div class="col-md-3">
+                                                <input class="form-control percentBox" type="number" @disabled name="LaxTypes[@laxCounter].Percent" value="@v" />
+                                            </div>
+                                            <div class="col-md-1">
+                                                %
+                                            </div>
+                                            <div class="col-md-1">
+                                                <button type='button' class='btn btn-default' onclick='javaascript: RemoveLax(this);'>Usuń</button>
+                                            </div>
+
+                                        </div>
+                                    }
+                                }
+                            }
+                        }
+                    </div>
+                    <div class="row form-group">
+                        <div class="col-md-12">
+                            @foreach (var producer in ViewBag.LaxProducers)
+                            {
+                                    <button type="button" data-toggle='modal' data-target='#cem-lax-@producer.Id'>@producer.Name</button>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <div id="packedCementTypes" class="@(Model != null && (Model.Assortment.PackageId == 2 || Model.Assortment.PackageId == 3) ? "" : "hidden")">
+                    <div class="row form-group">
+                        <div class="col-md-12">
+                            <h4>Rodzaje stosowanego cementu worek:</h4>
+                        </div>
+                    </div>
+                    <div id="packedList">
+                        @for (int i = 0; i < ViewBag.PackedTypes.Count; i++)
+                        {
+                            var ckd = "";
+                            var v = "0";
+                            var disabled = "disabled";
+                            if (Model != null && Model.PackedTypes != null)
+                            {
+                                SelectedPackedCementType packed = null;
+                                foreach (var packedType in Model.PackedTypes)
+                                {
+                                    if (packedType.Id == ViewBag.PackedTypes[i].Id)
+                                    {
+                                        packed = packedType;
+                                        break;
+                                    }
+
+                                }
+                                if (packed != null)
+                                {
+                                    if (packed.Checked)
+                                    {
+                                        ckd = "checked";
+                                        v = packed.Percent.ToString();
+                                        disabled = "";
+                                    }
+                                    string producer = "";
+                                    foreach (var p in ViewBag.PackedProducers)
+                                    {
+                                        if (ViewBag.PackedTypes[i].ProducerId == p.Id)
+                                        {
+                                            producer = p.Name;
+                                        }
+                                    }
+                                    packedCounter++;
+                                    <div class="col-md-12 row form-group packed">
+                                        <div class="col-md-1">
+                                            <input type="checkbox" value="true" @ckd class="packedCheckbox" name="PackedTypes[@packedCounter].Checked" /><input type="hidden" value="false" name="PackedTypes[@packedCounter].Checked" />
+                                        </div>
+                                        <div class="col-md-6">
+                                            <input type="hidden" name="PackedTypes[@packedCounter].Name" value="@packed.Name" />
+                                            <input type="hidden" name="PackedTypes[@packedCounter].Id" value="@packed.Id" />@producer @packed.Name
+                                        </div>
+                                        <div class="col-md-3">
+                                            <input class="form-control percentBox" type="number" @disabled name="PackedTypes[@packedCounter].Percent" value="@v" />
+                                        </div>
+                                        <div class="col-md-1">
+                                            %
+                                        </div>
+                                        <div class="col-md-1">
+                                            <button type='button' class='btn btn-default' onclick='javaascript: RemovePacked(this);'>Usuń</button>
+                                        </div>
+
+                                    </div>
+                                }
+                            }
+                        }
+                    </div>
+                    <div class="row form-group">
+                        <div class="col-md-12">
+                            @foreach (var producer in ViewBag.PackedProducers)
+                            {
+                                    <button type="button" data-toggle='modal' data-target='#cem-packed-@producer.Id'>@producer.Name</button>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row form-group">
+                    <div class="col-md-12">
+                        <h4>Oczekiwania wobec oferty handlowej producenta cementu:</h4>
+                    </div>
+                </div>
+
+                <div class="row form-group">
+                    <div class="col-md-4">
+                        @Html.DisplayNameFor(model => model.Assortment.CustomBrand)
+                    </div>
+                    <div class="col-md-8">
+                        @Html.TextAreaFor(model => model.Assortment.CustomBrand, new { @class = "form-control col-md-12" })
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-md-4">
+                        @Html.DisplayNameFor(model => model.Assortment.CommonMarketing)
+                    </div>
+                    <div class="col-md-8">
+                        @Html.TextAreaFor(model => model.Assortment.CommonMarketing, new { @class = "form-control col-md-12" })
+                    </div>
+                </div>
+
+                <div class="row form-group">
+                    <div class="col-md-4">
+                        @Html.DisplayNameFor(model => model.Assortment.AdvisoryService)
+                    </div>
+                    <div class="col-md-8">
+                        @Html.TextAreaFor(model => model.Assortment.AdvisoryService, new { @class = "form-control col-md-12" })
+                    </div>
+                </div>
+
+                <div class="row form-group">
+                    <div class="col-md-4">
+                        @Html.DisplayNameFor(model => model.Assortment.FreshCement)
+                    </div>
+                    <div class="col-md-8">
+                        @Html.TextAreaFor(model => model.Assortment.FreshCement, new { @class = "form-control col-md-12" })
+                    </div>
+                </div>
+
+                <div class="row form-group">
+                    <div class="col-md-4">
+                        @Html.DisplayNameFor(model => model.Assortment.CostlessComplaint)
+                    </div>
+                    <div class="col-md-8">
+                        @Html.TextAreaFor(model => model.Assortment.CostlessComplaint, new { @class = "form-control col-md-12" })
+                    </div>
+                </div>
+
+                <div class="row form-group">
+                    <div class="col-md-4">
+                        @Html.DisplayNameFor(model => model.Assortment.Others)
+                    </div>
+                    <div class="col-md-8">
+                        @Html.TextAreaFor(model => model.Assortment.Others, new { @class = "form-control col-md-12" })
+                    </div>
+                </div>
+
+                <div class="row form-group">
+                    <div class="col-md-4">
+                        @Html.DisplayNameFor(model => model.Assortment.AffectTheChoice)
+                    </div>
+                    <div class="col-md-8">
+                        @Html.TextAreaFor(model => model.Assortment.AffectTheChoice, new { @class = "form-control col-md-12" })
+                    </div>
+                </div>
+
+                <div class="row form-group">
+                    <div class="col-md-4">
+                        @Html.DisplayNameFor(model => model.Assortment.QualityComments)
+                    </div>
+                    <div class="col-md-8">
+                        @Html.TextAreaFor(model => model.Assortment.QualityComments, new { @class = "form-control col-md-12" })
+                    </div>
+                </div>
+
+                <div class="row form-group">
+                    <div class="col-md-12">
+                        <h4>Siła marki Górażdże w porównaniu do innych producentów (worek):</h4>
+                    </div>
+                </div>
+
+                <div class="row form-group">
+                    <div class="col-md-4">
+                        @Html.DisplayNameFor(model => model.Assortment.BrandPowerId)
+                    </div>
+                    <div class="col-md-7">
+                        <select name="Assortment.BrandPowerId" class="form-control">
+                            @foreach (webapp.Models.BrandPower power in ViewBag.BrandPower)
+                            {
+                                <option value="@power.Id" @(Model != null && Model.Assortment.BrandPowerId == power.Id ? "selected" : "")>@power.Value</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-1">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2"></div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-2"></div>
+        <div class="col-md-8">
+            <button type="submit" class="btn btn-primary btn-block">Dalej</button>
+            <div class="col-md-12" id="branches">
+
+            </div>
+        </div>
+        <div class="col-md-2"></div>
+    </div>
+
+    <p></p>
+
+    foreach (var prod in ViewBag.LaxProducers)
+    {
+        var i = 0;
+        <div class="modal fade" id="cem-lax-@prod.Id" tabindex="-1" role="dialog" aria-labelledby="label-lax-@prod.Id" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title" id="label-lax-@prod.Id">@prod.Name</h4>
+                    </div>
+                    <div class="modal-body">
+                        @foreach (var cem in ViewBag.LaxTypes)
+                        {
+                            if (cem.ProducerId == prod.Id)
+                            {
+                                <div class="col-md-12 row form-group">
+                                    <div class="col-md-7">
+                                        @cem.Name
+                                    </div>
+                                    <div class="col-md-5">
+                                        <button type="button" onclick="javascript: AddLax(@cem.Id, ' @cem.Name ', ' @prod.Name ', this);">Dodaj</button>
+                                    </div>
+
+                                </div>
+                                i++;
+                            }
+                        }
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" data-dismiss="modal">Ok</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    
+    foreach (var prod in ViewBag.PackedProducers)
+    {
+        var i = 0;
+        <div class="modal fade" id="cem-packed-@prod.Id" tabindex="-1" role="dialog" aria-labelledby="label-packed-@prod.Id" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title" id="label-packed-@prod.Id">@prod.Name</h4>
+                    </div>
+                    <div class="modal-body">
+                        @foreach (var cem in ViewBag.PackedTypes)
+                        {
+                            if (cem.ProducerId == prod.Id)
+                            {
+                                <div class="col-md-12 row form-group">
+                                    <div class="col-md-7">
+                                        @cem.Name
+                                    </div>
+                                    <div class="col-md-5">
+                                        <button type="button" onclick="javascript: AddPacked(@cem.Id, '@cem.Name', '@prod.Name', this);">Dodaj</button>
+                                    </div>
+
+                                </div>
+                                i++;
+                            }
+                        }
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" data-dismiss="modal">Ok</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}
+
+<script>
+    var laxCounter = @(laxCounter + 1);
+    var packedCounter = @(packedCounter + 1);
+
+    function AddLax(id, name, prod, btn)
+    {
+        var html = "<div class='lax col-md-12 row form-group'>" +
+                            "<div class='col-md-1'>" +
+                                "<input type='checkbox' value='true' class='laxCheckbox' name='LaxTypes[" + laxCounter + "].Checked' /><input type='hidden' value='false' name='LaxTypes[" + laxCounter + "].Checked' />" +
+                            "</div>" +
+                            "<div class='col-md-6'>" +
+                            "<input type='hidden' name='LaxTypes[" + laxCounter + "].Name' value='" + name + "' />" +
+                                "<input type='hidden' name='LaxTypes[" + laxCounter + "].Id' value='" + id + "' />" + prod + " " + name +
+                            "</div>" +
+                            "<div class='col-md-3'>" +
+                                "<input class='form-control percentBox' type='number' disabled name='LaxTypes[" + laxCounter + "].Percent' value='0' />" +
+                            "</div>" +
+                            "<div class='col-md-1'>" +
+                                "%" +
+                            "</div>" +
+                            "<div class='col-md-1'>" +
+                                "<button type='button' class='btn btn-default' onclick='javaascript: RemovePacked(this);'>Usuń</button>" +
+                            "</div>" +
+                        "</div>";
+        $("#laxList").append(html);
+        laxCounter++;
+        $(btn).remove();
+        $(".laxCheckbox").on("change", function () {
+            var percentBox = $(this).parent().parent().find(".percentBox");
+
+            if ($(this).is(":checked")) {
+                if (percentBox.prop("disabled")) {
+                    percentBox.removeAttr("disabled");
+                }
+            }
+            else {
+                percentBox.val(0);
+                percentBox.attr("disabled", true);
+            }
+        });
+    }
+
+    function AddPacked(id, name, prod, btn)
+    {
+        var html = "<div class='packed col-md-12 row form-group'>" +
+                            "<div class='col-md-1'>" +
+                                "<input type='checkbox' value='true' class='packedCheckbox' name='PackedTypes[" + packedCounter + "].Checked' /><input type='hidden' value='false' name='PackedTypes[" + packedCounter + "].Checked' />" +
+                            "</div>" +
+                            "<div class='col-md-6'>" +
+                                "<input type='hidden' name='PackedTypes["+packedCounter+"].Name' value='"+name+"' />"+
+                                "<input type='hidden' name='PackedTypes[" + packedCounter + "].Id' value='" + id + "' />" + prod + " " + name +
+                            "</div>" +
+                            "<div class='col-md-3'>" +
+                                "<input class='form-control percentBox' type='number' disabled name='PackedTypes[" + packedCounter + "].Percent' value='0' />" +
+                            "</div>" +
+                            "<div class='col-md-1'>" +
+                                "%" +
+                            "</div>" +
+                            "<div class='col-md-1'>" +
+                                "<button type='button' class='btn btn-default' onclick='javaascript: RemovePacked(this);'>Usuń</button>" +
+                            "</div>" +
+                        "</div>";
+        $("#packedList").append(html);
+        packedCounter++;
+        $(btn).remove();
+        $(".packedCheckbox").on("change", function () {
+            var percentBox = $(this).parent().parent().find(".percentBox");
+
+            if ($(this).is(":checked")) {
+                if (percentBox.prop("disabled")) {
+                    percentBox.removeAttr("disabled");
+                }
+            }
+            else {
+                percentBox.val(0);
+                percentBox.attr("disabled", true);
+            }
+        });
+    }
+
+    function RemoveLax(button){
+        var parent = button.parentNode.parentNode.parentNode;
+        parent.removeChild(button.parentNode.parentNode);
+
+        laxCounter = 0;
+        $(".lax").each(function (i, obj) {
+            $(this).find("input[name]").each(function () {
+                var name = $(this).attr("name");
+                name = name.replace(/\[.*?\]/g, "[" + laxCounter + "]");
+                $(this).attr("name",name);
+            });
+            laxCounter++;
+        });
+    }
+
+    function RemovePacked(button){
+        var parent = button.parentNode.parentNode.parentNode;
+        parent.removeChild(button.parentNode.parentNode);
+
+        packedCounter = 0;
+        $(".packed").each(function (i, obj) {
+            $(this).find("input[name]").each(function () {
+                var name = $(this).attr("name");
+                name = name.replace(/\[.*?\]/g, "[" + packedCounter + "]");
+                $(this).attr("name",name);
+            });
+            packedCounter++;
+        });
+    }
+
+    $(function(){
+        $(".laxCheckbox").on("change", function () {
+            var percentBox = $(this).parent().parent().find(".percentBox");
+
+            if ($(this).is(":checked")) {
+                if (percentBox.prop("disabled")) {
+                    percentBox.removeAttr("disabled");
+                }
+            }
+            else {
+                percentBox.val(0);
+                percentBox.attr("disabled", true);
+            }
+        });
+
+        $(".packedCheckbox").on("change", function () {
+            var percentBox = $(this).parent().parent().find(".percentBox");
+
+            if ($(this).is(":checked")) {
+                if (percentBox.prop("disabled")) {
+                    percentBox.removeAttr("disabled");
+                }
+            }
+            else {
+                percentBox.val(0);
+                percentBox.attr("disabled", true);
+            }
+        });
+
+        $(".annualBox").on("change", function () {
+            var percentBox = $("#Assortment_AnnualNeed");
+
+            if (!$(this).is(":checked")) {
+                if (percentBox.prop("disabled")) {
+                    percentBox.removeAttr("disabled");
+                }
+            }
+            else {
+                percentBox.val(0);
+                percentBox.attr("disabled", true);
+            }
+        });
+
+        $(".packageId").on("change", function () {
+            if(this.value == "1"){
+                if($("#laxCementTypes").hasClass("hidden")){
+                    $("#laxCementTypes").removeClass("hidden");
+                }
+                if(!$("#packedCementTypes").hasClass("hidden")){
+                    $("#packedCementTypes").addClass("hidden");
+                }
+                if(!$("#laxPercent").hasClass("hidden")){
+                    $("#laxPercent").addClass("hidden");
+                }
+            }
+            else if(this.value == "2"){
+                if(!$("#laxCementTypes").hasClass("hidden")){
+                    $("#laxCementTypes").addClass("hidden");
+                }
+                if($("#packedCementTypes").hasClass("hidden")){
+                    $("#packedCementTypes").removeClass("hidden");
+                }
+                if(!$("#laxPercent").hasClass("hidden")){
+                    $("#laxPercent").addClass("hidden");
+                }
+            }
+            else if(this.value == "3"){
+                if($("#laxCementTypes").hasClass("hidden")){
+                    $("#laxCementTypes").removeClass("hidden");
+                }
+                if($("#packedCementTypes").hasClass("hidden")){
+                    $("#packedCementTypes").removeClass("hidden");
+                }
+                if($("#laxPercent").hasClass("hidden")){
+                    $("#laxPercent").removeClass("hidden");
+                }
+            }
+        });
+    });
+</script>

@@ -1,0 +1,103 @@
+﻿@model webapp.Models.ViewModels.NewVisitStep5
+
+@{
+    ViewBag.Title = "Obsługiwani klienci";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    <input type="hidden" name="VisitId" value="@ViewBag.VisitId" />
+    <div class="row">
+        <div class="col-md-2"></div>
+        <div class="panel panel-default col-md-8">
+            <div class="panel-heading">
+                <h3 class="panel-title">Dane finansowe</h3>
+            </div>
+            <div class="panel-body">
+
+                <div class="row form-group">
+                    <div class="col-md-6">
+                        <label>Obrót roczny</label>
+                    </div>
+                    <div class="col-md-3">
+                        <input name="Annual" value="@(Model != null ? Model.Annual.ToString() : "0")" type="number" class="col-md-12 form-control" />
+                    </div>
+                    <div class="col-md-3">
+                        zł
+                    </div>
+                </div>
+
+                <div class="row form-group">
+                    <div class="col-md-12">
+                        <h4>Obsługiwani klienci</h4>
+                    </div>
+                </div>
+
+                @for (int i = 0; i < ViewBag.Clients.Count; i++)
+                {
+                    var ckd = "";
+                    var val = "0";
+                    var disabled = "disabled";
+                    if(Model != null && Model.Clients != null)
+                    {
+                        foreach (webapp.Models.SelectedClients c in Model.Clients)
+                        {
+                            if(c.Id == ViewBag.Clients[i].Id && c.Checked)
+                            {
+                                ckd = "checked";
+                                val = c.Percent.ToString();
+                                disabled = "";
+                            }
+                        }
+                    }
+                    <div class="row form-group">
+                        <div class="col-md-6">
+                            <input value="true" name="Clients[@i].Checked" type="checkbox" class="checkbox" @ckd /><input type="hidden" name="Clients[@i].Checked"/>@ViewBag.Clients[i].Name <br/>
+                            <input type="hidden" name="Clients[@i].Id" value="@ViewBag.Clients[i].Id"/>
+                        </div>
+                        <div class="col-md-3">
+                            <input name="Clients[@i].Percent" type="number" value="@val" @disabled class="percentBox col-md-12 form-control" />
+                        </div>
+                        <div class="col-md-3">
+                            %
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+        <div class="col-md-2"></div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-2"></div>
+        <div class="col-md-8">
+            <button type="submit" class="btn btn-primary btn-block">Dalej</button>
+            <div class="col-md-12" id="branches">
+
+            </div>
+        </div>
+        <div class="col-md-2"></div>
+    </div>
+
+
+}
+
+<script>
+    $(function () {
+        $(".checkbox").on("change", function () {
+            var percentBox = $(this).parent().parent().find(".percentBox");
+
+            if ($(this).is(":checked")) {
+                if (percentBox.prop("disabled")) {
+                    percentBox.removeAttr("disabled");
+                }
+            }
+            else {
+                percentBox.val(0);
+                percentBox.attr("disabled", true);
+            }
+        });
+    });
+</script>

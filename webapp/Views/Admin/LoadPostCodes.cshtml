@@ -1,0 +1,17 @@
+﻿@{
+    ViewBag.Title = "Dane do raportu";
+}
+
+<h2>Kody pocztowe/miasta/powiaty/województwa</h2>
+<h3>Wybierz plik .xls, który zawiera listę kodów pocztowych/miast/powiatów/województw</h3>
+@using (Html.BeginForm("LoadPostCodes", "Admin", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    <div class="row">
+        <div class="col-md-4">
+            <input type="file" name="file" />
+        </div>
+        <div class="col-md-8">
+            <button type="submit" class="btn btn-default">Wyślij</button>
+        </div>
+    </div>
+}

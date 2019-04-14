@@ -1,0 +1,125 @@
+﻿@using webapp.Enums
+@using webapp.Helpers.Atttributes
+@{
+    ViewBag.Title = "Strona główna";
+}
+<div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+    <div>
+        @using (Html.BeginForm("Search", "Manager", FormMethod.Get, new { role = "search", @class = "navbar-form" }))
+        { 
+            <div class="input-group">
+                <input type="text" name="query" class="form-control" placeholder="Nazwa firmy lub NIP" />
+                <div class="input-group-btn">
+                    <button type="submit" class="btn btn-default">Szukaj</button>
+                </div>
+            </div>
+        }
+    </div>
+    <div style="margin-top: 20px;">
+        <table class="table">
+            <caption class="text-center">Dane osobowe</caption>
+            <tr>
+                <td><b>Login:</b></td>
+                <td>@(((webapp.Security.CustomPrincipal)User).CustomIdentity.UserName)</td>
+            </tr>
+            <tr>
+                <td><b>Imię i nazwisko:</b></td>
+                <td>@(((webapp.Security.CustomPrincipal)User).CustomIdentity.FirstName) @(((webapp.Security.CustomPrincipal)User).CustomIdentity.LastName)</td>
+            </tr>
+            <tr>
+                <td><b>Adres e-mail:</b></td>
+                <td>@(((webapp.Security.CustomPrincipal)User).CustomIdentity.Email)</td>
+            </tr>
+            <tr>
+                <td><b>Telefon:</b></td>
+                <td>@(((webapp.Security.CustomPrincipal)User).CustomIdentity.PhoneNumber)</td>
+            </tr>
+            <tr>
+                <td><b>Region:</b></td>
+                <td>-</td>
+            </tr>
+            <tr>
+                <td><b>Kod:</b></td>
+                <td>-</td>
+            </tr>
+        </table>
+        <table class="table">
+            <caption class="text-center">Statystyki</caption>
+            <tr>
+                <td>Liczba firm <b>dokończonych:</b></td>
+                <td>@ViewBag.Status1</td>
+            </tr>
+            <tr>
+                <td>Liczba firm <b>niedokończonych:</b></td>
+                <td>@ViewBag.Status0</td>
+            </tr>
+            <tr>
+                <td>Status <b>żółty:</b></td>
+                <td>@ViewBag.Status2</td>
+            </tr>
+            <tr>
+                <td>Status <b>brązowy:</b></td>
+                <td>@ViewBag.Status3</td>
+            </tr>
+        </table>
+    </div>
+</div>
+<div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+    <div class="row">
+        <div class="col-md-2"></div>
+        <div class="col-md-8">
+            <div class="row">
+                <div class="col-md-12 text-center">
+                    <h3>Dodane firmy</h3>
+                </div>
+            </div>
+            <div class="row">
+                @using (Html.BeginForm("Index", "Manager", FormMethod.Get))
+                {
+                    <div class="col-md-8">
+
+                        <select name="sort" class="form-control">
+                            <option value="ascAdd" @(ViewBag.Sort == "ascAdd" ? "selected" : "")>Data dodania rosnąco</option>
+                            <option value="descAdd" @(ViewBag.Sort == "descAdd" ? "selected" : "")>Data dodania malejąco</option>
+                            <option value="ascVisit" @(ViewBag.Sort == "ascVisit" ? "selected" : "")>Data wizyty rosnąco</option>
+                            <option value="descVisit" @(ViewBag.Sort == "descVisit" ? "selected" : "")>Data wizity malejąco</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <button type="submit" class="form-control">Sortuj</button>
+                    </div>
+                }
+            </div>
+
+            @foreach (webapp.Models.ViewModels.AgentBusinessData data in ViewBag.Data)
+            {
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">@data.AgentFullName</h3>
+                    </div>
+                    <div class="panel-body">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th class="col-md-8">Nazwa</th>
+                                    <th class="col-md-4">Status</th>
+                                </tr>
+                            </thead>
+                            @foreach (var item in data.Businesses)
+                            {
+                                <tr>
+                                    <td>
+                                        @Html.ActionLink(item.Name, "ClientDetails", new { controller = "Client", id = item.Id })
+                                    </td>
+                                    <td>@(EnumHelper<BusinessStatus>.GetDisplayValue(item.Status))
+                                    </td>
+                                </tr>
+                            }
+                        </table>
+                    </div>
+                </div>
+            }
+        </div>
+        <div class="col-md-2"></div>
+    </div>
+</div>

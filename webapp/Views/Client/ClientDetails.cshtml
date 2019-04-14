@@ -1,0 +1,139 @@
+﻿@using webapp.Enums
+@using webapp.Helpers.Atttributes
+@using webapp.Helpers.Html
+@model webapp.ViewModels.ClientDetailsViewModel
+
+@{
+    ViewBag.Title = "Dane klienta";
+}
+
+<div class="row">
+    <div class="col-md-1">
+        @if (((webapp.Security.CustomPrincipal)User).CustomIdentity.UserRoleName == "agent")
+        {
+            @Html.ActionLink("< Wróć", "Index", new { controller = "Agent" }, new { @class = "btn btn-default" })
+        }
+        else if (((webapp.Security.CustomPrincipal)User).CustomIdentity.UserRoleName == "manager")
+        {
+            @Html.ActionLink("< Wróć", "Index", new { controller = "Manager" }, new { @class = "btn btn-default" })
+        }
+    </div>
+    <div class="panel panel-default col-md-7">
+        <div class="panel-heading">
+            <h3 class="panel-title">Szczegóły</h3>
+        </div>
+        <div class="panel-body">
+            
+            <div class="row col-md-12">
+                <div class="col-md-6">
+                    <label>Status</label>
+                </div>
+                <div class="col-md-6">
+                    @(EnumHelper<ClientStatus>.GetDisplayValue(Model.Status))
+                </div>
+            </div>
+            @Html.DisplayRowFor(model => model.CooperationType, 6, 6)
+
+            <div class="row col-md-12">
+                <div class="col-md-6">
+                    <label>Data dodania</label>
+                </div>
+                <div class="col-md-6">
+                    @Model.AddDate
+                </div>
+            </div>
+
+            <div class="row col-md-12">
+                <div class="col-md-12">
+                    <h4 class="text-center">Adres</h4>
+                </div>
+            </div>
+            @Html.DisplayRowFor(model => model.Name, 6, 6)
+            @Html.DisplayRowFor(model => model.Street, 6, 6)
+            @Html.DisplayRowFor(model => model.BuildingNumber, 6, 6)
+            @Html.DisplayRowFor(model => model.PostCode, 6, 6)
+            @Html.DisplayRowFor(model => model.Province, 6, 6)
+            @Html.DisplayRowFor(model => model.District, 6, 6)
+            @Html.DisplayRowFor(model => model.City, 6, 6)
+            <div class="row col-md-12">
+                <div class="col-md-12">
+                    <h4 class="text-center">Pozostałe dane</h4>
+                </div>
+            </div>
+            @Html.DisplayRowFor(model => model.Nip, 6, 6)
+            @Html.DisplayRowFor(model => model.LegalForm, 6, 6)
+            @Html.DisplayRowFor(model => model.StartYear, 6, 6)
+            <div class="row col-md-12">
+                <div class="col-md-6">
+                    <label>Członek grupy</label>
+                </div>
+                <div class="col-md-6">
+                    @(Model.GroupMember ? "Tak" : "Nie")
+                </div>
+            </div>
+            @Html.DisplayRowFor(model => model.Group, 6, 6)
+            @Html.DisplayRowFor(model => model.Owner, 6, 6)
+            @Html.DisplayRowFor(model => model.OwnerPhone, 6, 6)
+            @Html.DisplayRowFor(model => model.Phone1, 6, 6)
+            @Html.DisplayRowFor(model => model.Phone2, 6, 6)
+            @Html.DisplayRowFor(model => model.Phone3, 6, 6)
+            @Html.DisplayRowFor(model => model.Email, 6, 6)
+            @Html.DisplayRowFor(model => model.Website, 6, 6)
+            @Html.DisplayRowFor(model => model.Agent, 6, 6)
+            <div class="row col-md-12">
+                <div class="col-md-12">
+                    <h4 class="text-center">Osoba do kontaktu</h4>
+                </div>
+            </div>
+            @Html.DisplayRowFor(model => model.ContactPerson, 6, 6)
+            @Html.DisplayRowFor(model => model.ContactPersonPosition, 6, 6)
+            @Html.DisplayRowFor(model => model.ContactPersonEmail, 6, 6)
+            @Html.DisplayRowFor(model => model.ContactPersonPhone, 6, 6)
+            <div class="row col-md-12">
+                <div class="col-md-6">
+                    <label></label>
+                </div>
+                <div class="col-md-6">
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="row">
+            <div class="panel panel-default col-md-12">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Wizyty</h3>
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <table class="table table-hover col-md-12">
+                            <thead>
+                                <tr>
+                                    <th class="col-md-5">Data</th>
+                                    <th class="col-md-7"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (webapp.Models.Visit v in Model.Visits)
+                                {
+                                    <tr>
+                                        <td>@Html.ActionLink(v.VisitDate.ToString("dd-MM-yyyy"), "VisitDetails", new { id = v.Id })</td>
+                                        <td></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    @if (((webapp.Security.CustomPrincipal)User).CustomIdentity.UserRoleName == "agent")
+                    {
+                        <div class="row">
+                            @Html.ActionLink("Nowa wizyta", "AddVisit_Step1", new { controller = "Agent", businessId = Model.Business.Id }, new { @class = "btn btn-block btn-primary" })
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

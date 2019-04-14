@@ -1,0 +1,372 @@
+﻿@using webapp.Models
+@model webapp.Models.ClientStep7
+
+@{
+    ViewBag.Title = "Ceny zakupu/sprzedaży klienta";
+    var laxC = 0;
+    var packedC = 0;
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    <input type="hidden" name="VisitId" value="@ViewBag.VisitId" />
+    <div class="row @(ViewBag.Step2Type == 2 ? "hidden" : "")">
+        <div class="col-md-2"></div>
+        <div class="panel panel-default col-md-8">
+            <div class="panel-heading">
+                <h3 class="panel-title">Ceny zakupu/sprzedaży klienta - luz</h3>
+            </div>
+            <div class="panel-body">
+                <div class="row">
+                    <div id="buys" class=" col-md-12">
+                        <div class="row">
+                            <div class="row form-group">
+                                <div class="col-md-12">
+                                    @foreach (var producer in ViewBag.LaxProducers)
+                                    {
+                                        <button type="button" data-toggle='modal' data-target='#cem-lax-@producer.Id'>@producer.Name</button>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                        <table class="table col-md-12">
+                            <thead>
+                                <tr>
+                                    <th class="col-md-5">Nazwa cementu</th>
+                                    <th class="col-md-2">Cena zakupu netto zł/ za tonę</th>
+                                    <th class="col-md-2"></th>
+                                    <th class="col-md-2">Cena sprzedaży netto/ za tonę</th>
+                                    <th class="col-md-1"></th>
+                                </tr>
+                            </thead>
+                            <tbody id="laxList">
+                                @foreach (var item in ViewBag.LaxTypes)
+                                {
+                                    if (Model.LaxTypes.Any(t => t.CementId == item.Id) || ((IEnumerable<VisitLaxType>)ViewBag.Step2LaxCements).Any(c => c.LaxTypeId == item.Id))
+                                    {
+                                        var type = Model.LaxTypes.FirstOrDefault(c => c.CementId == item.Id) != null ? Model.LaxTypes.FirstOrDefault(c => c.CementId == item.Id).PriceType : 1;
+                                        var buy = Model.LaxTypes.FirstOrDefault(c => c.CementId == item.Id) != null ? Model.LaxTypes.FirstOrDefault(c => c.CementId == item.Id).BuyPrice : 0;
+                                        var sell = Model.LaxTypes.FirstOrDefault(c => c.CementId == item.Id) != null ? Model.LaxTypes.FirstOrDefault(c => c.CementId == item.Id).SellPrice : 0;
+                                        var name = item.Name;
+                                        foreach (webapp.Models.Producer p in ViewBag.LaxProducers)
+                                        {
+                                            if (item.ProducerId == p.Id)
+                                            {
+                                                name = p.Name + " " + name;
+                                                break;
+                                            }
+                                        }
+                                        <tr class='lax'>
+                                            <td>
+                                                <input type='hidden' name='LaxTypes[@laxC].CementId' value='@item.Id' /> @name
+                                            </td>
+                                            <td>
+                                                <input class='form-control percentBox' type='text' name='LaxTypes[@laxC].BuyPrice' value='@buy' />
+                                            </td>
+                                            <td>
+                                                <select class='form-control' name='LaxTypes[@laxC].PriceType'>
+                                                    <option value='1' @(type == 1 ? "selected" : "")>Brak danych</option>
+                                                    <option value='2' @(type == 2 ? "selected" : "")>Loco</option>
+                                                    <option value='3' @(type == 3 ? "selected" : "")>Franco</option>
+                                                </select>
+                                            </td>
+                                            <td>
+                                                <input class='form-control percentBox' type='text' name='LaxTypes[@laxC].SellPrice' value='@sell' />
+                                            </td>
+                                            <td>
+                                                <button type='button' class='btn btn-default' onclick=' javaascript: RemoveLax(this); '>Usuń</button>
+                                            </td>
+                                        </tr>
+                                        laxC++;
+                                    }
+                                }
+                            </tbody>
+
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2"></div>
+    </div>
+
+    <div class="row @(ViewBag.Step2Type == 1 ? "hidden" : "")">
+        <div class="col-md-2"></div>
+        <div class="panel panel-default col-md-8">
+            <div class="panel-heading">
+                <h3 class="panel-title">Ceny zakupu/sprzedaży klienta - worek</h3>
+            </div>
+            <div class="panel-body">
+
+                <div id="buys" class="col-md-12">
+                    <div class="row">
+                        <div class="row form-group">
+                            <div class="col-md-12">
+                                @foreach (var producer in ViewBag.PackedProducers)
+                                {
+                                    <button type="button" data-toggle='modal' data-target='#cem-packed-@producer.Id'>@producer.Name</button>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <table class="table col-md-12">
+                        <thead>
+                            <tr>
+                                <th class="col-md-5">Nazwa cementu</th>
+                                <th class="col-md-2">Cena zakupu netto zł/za worek</th>
+                                <th class="col-md-2"></th>
+                                <th class="col-md-2">Cena sprzedaży netto zł/za worek</th>
+                                <th class="col-md-1"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="packedList">
+                        @foreach (var item in ViewBag.PackedTypes)
+                        {
+                            if (Model.PackedTypes.Any(t => t.CementId == item.Id) || ((IEnumerable<VisitPackedType>)ViewBag.Step2PackedCements).Any(c => c.PackedTypeId == item.Id))
+                            {
+                                var type = Model.PackedTypes.FirstOrDefault(c => c.CementId == item.Id) != null ? Model.PackedTypes.FirstOrDefault(c => c.CementId == item.Id).PriceType : 1;
+                                var buy = Model.PackedTypes.FirstOrDefault(c => c.CementId == item.Id) != null ? Model.PackedTypes.FirstOrDefault(c => c.CementId == item.Id).BuyPrice : 0;
+                                var sell = Model.PackedTypes.FirstOrDefault(c => c.CementId == item.Id) != null ? Model.PackedTypes.FirstOrDefault(c => c.CementId == item.Id).SellPrice : 0;
+                                var name = item.Name;
+                                foreach (webapp.Models.Producer p in ViewBag.PackedProducers)
+                                {
+                                    if (item.ProducerId == p.Id)
+                                    {
+                                        name = p.Name + " " + name;
+                                        break;
+                                    }
+                                }
+                                <tr class='packed'>
+                                    <td>
+                                        <input type='hidden' name='PackedTypes[@packedC].CementId' value='@item.Id' /> @name
+                                    </td>
+                                    <td>
+                                        <input class='form-control percentBox' type='text' name='PackedTypes[@packedC].BuyPrice' value='@buy' />
+                                    </td>
+                                    <td>
+                                        <select class='form-control' name='PackedTypes[@laxC].PriceType'>
+                                            <option value='1' @(type == 1 ? "selected" : "")>Brak danych</option>
+                                            <option value='2' @(type == 2 ? "selected" : "")>Loco</option>
+                                            <option value='3' @(type == 3 ? "selected" : "")>Franco</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <input class='form-control percentBox' type='text' name='PackedTypes[@laxC].SellPrice' value='@sell' />
+                                    </td>
+                                    <td>
+                                        <button type='button' class='btn btn-default' onclick=' javaascript: RemovePacked(this); '>Usuń</button>
+                                    </td>
+                                </tr>
+                                laxC++;
+                            }
+                        }
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+        <div class="col-md-2"></div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-3"></div>
+        <div class="col-md-6">
+            <button type="submit" class="btn btn-primary btn-block">Dalej</button>
+            <div class="col-md-12" id="branches">
+
+            </div>
+        </div>
+        <div class="col-md-3"></div>
+    </div>
+
+    foreach (var prod in ViewBag.LaxProducers)
+    {
+        var i = 0;
+        <div class="modal fade" id="cem-lax-@prod.Id" tabindex="-1" role="dialog" aria-labelledby="label-lax-@prod.Id" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title" id="label-lax-@prod.Id">@prod.Name</h4>
+                    </div>
+                    <div class="modal-body">
+                        @foreach (var cem in ViewBag.LaxTypes)
+                        {
+                            if (cem.ProducerId == prod.Id)
+                            {
+                                <div class="col-md-12 row form-group">
+                                    <div class="col-md-7">
+                                        @cem.Name
+                                    </div>
+                                    <div class="col-md-5">
+                                        <button type="button" onclick="javascript: AddLax(@cem.Id, ' @cem.Name ', ' @prod.Name ', this);">Dodaj</button>
+                                    </div>
+
+                                </div>
+                                i++;
+                            }
+                        }
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" data-dismiss="modal">Ok</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    foreach (var prod in ViewBag.PackedProducers)
+    {
+        var i = 0;
+        <div class="modal fade" id="cem-packed-@prod.Id" tabindex="-1" role="dialog" aria-labelledby="label-packed-@prod.Id" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title" id="label-packed-@prod.Id">@prod.Name</h4>
+                    </div>
+                    <div class="modal-body">
+                        @foreach (var cem in ViewBag.PackedTypes)
+                        {
+                            if (cem.ProducerId == prod.Id)
+                            {
+                                <div class="col-md-12 row form-group">
+                                    <div class="col-md-7">
+                                        @cem.Name
+                                    </div>
+                                    <div class="col-md-5">
+                                        <button type="button" onclick="javascript: AddPacked(@cem.Id, '@cem.Name', '@prod.Name', this);">Dodaj</button>
+                                    </div>
+
+                                </div>
+                                i++;
+                            }
+                        }
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" data-dismiss="modal">Ok</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+}
+
+<script>
+    var laxCounter = @(laxC);
+    var packedCounter = @(packedC);
+
+    function AddLax(id, name, prod, btn)
+    {
+        var html = "<tr class='lax'>" +
+                            "<td>" +
+                                "<input type='hidden' name='LaxTypes[" + laxCounter + "].CementId' value='" + id + "' />" + prod + " " + name +
+                            "</td>" +
+                            "<td>" +
+                                "<input class='form-control percentBox' type='text' name='LaxTypes[" + laxCounter + "].BuyPrice' value='0' />" +
+                            "</td>" +
+                            "<td>" +
+                            "<select class='form-control' name='LaxTypes[" + laxCounter + "].PriceType' >" +
+                            "<option value='1'>Brak danych</option>" +
+                            "<option value='2'>Loco</option>" +
+                            "<option value='3'>Franco</option>" +
+                            "</select>" +
+                            "</td>" +
+                            "<td>" +
+                                "<input class='form-control percentBox' type='text' name='LaxTypes[" + laxCounter + "].SellPrice' value='0' />" +
+                            "</td>" +
+                            "<td>" +
+                                "<button type='button' class='btn btn-default' onclick='javaascript: RemoveLax(this);'>Usuń</button>" +
+                            "</td>" +
+                        "</tr>";
+        $("#laxList").append(html);
+        laxCounter++;
+        $(btn).remove();
+        $(".laxCheckbox").on("change", function () {
+            var percentBox = $(this).parent().parent().find(".percentBox");
+
+            if ($(this).is(":checked")) {
+                if (percentBox.prop("disabled")) {
+                    percentBox.removeAttr("disabled");
+                }
+            }
+            else {
+                percentBox.val(0);
+                percentBox.attr("disabled", true);
+            }
+        });
+    }
+
+    function AddPacked(id, name, prod, btn)
+    {
+        var html = "<tr class='packed'>" +
+                            "<td>" +
+                                "<input type='hidden' name='PackedTypes[" + packedCounter + "].CementId' value='" + id + "' />" + prod + " " + name +
+                            "</td>" +
+                            "<td>" +
+                                "<input class='form-control percentBox' type='text' name='PackedTypes[" + packedCounter + "].BuyPrice' value='0' />" +
+                            "</td>" +
+                            "<td>" +
+                            "<select class='form-control' name='PackedTypes[" + packedCounter + "].PriceType' >" +
+                            "<option value='1'>Brak danych</option>" +
+                            "<option value='2'>Loco</option>" +
+                            "<option value='3'>Franco</option>" +
+                            "</select>" +
+                            "</td>" +
+                            "<td>" +
+                                "<input class='form-control percentBox' type='text' name='PackedTypes[" + packedCounter + "].SellPrice' value='0' />" +
+                            "</td>" +
+                            "<td>" +
+                                "<button type='button' class='btn btn-default' onclick='javaascript: RemovePacked(this);'>Usuń</button>" +
+                            "</td>" +
+                        "</tr>";
+        $("#packedList").append(html);
+        packedCounter++;
+        $(btn).remove();
+        $(".packedCheckbox").on("change", function () {
+            var percentBox = $(this).parent().parent().find(".percentBox");
+
+            if ($(this).is(":checked")) {
+                if (percentBox.prop("disabled")) {
+                    percentBox.removeAttr("disabled");
+                }
+            }
+            else {
+                percentBox.val(0);
+                percentBox.attr("disabled", true);
+            }
+        });
+    }
+
+    function RemoveLax(button){
+        var parent = button.parentNode.parentNode.parentNode;
+        parent.removeChild(button.parentNode.parentNode);
+
+        laxCounter = 0;
+        $(".lax").each(function (i, obj) {
+            $(this).find("input[name]").each(function () {
+                var name = $(this).attr("name");
+                name = name.replace(/\[.*?\]/g, "[" + laxCounter + "]");
+                $(this).attr("name",name);
+            });
+            laxCounter++;
+        });
+    }
+
+    function RemovePacked(button){
+        var parent = button.parentNode.parentNode.parentNode;
+        parent.removeChild(button.parentNode.parentNode);
+
+        packedCounter = 0;
+        $(".packed").each(function (i, obj) {
+            $(this).find("input[name]").each(function () {
+                var name = $(this).attr("name");
+                name = name.replace(/\[.*?\]/g, "[" + packedCounter + "]");
+                $(this).attr("name",name);
+            });
+            packedCounter++;
+        });
+    }
+</script>

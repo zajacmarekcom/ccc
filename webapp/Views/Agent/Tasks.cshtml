@@ -1,0 +1,31 @@
+﻿@model System.Collections.Generic.IEnumerable<webapp.Models.ViewModels.BusinessItem>
+
+@{
+    ViewBag.Title = "Zadania";
+}
+
+<div class="row">
+    <div class="col-md-2"></div>
+    <div class="col-md-8">
+        <div class="row">
+            <h3 class="text-center">Zadania</h3>
+        </div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th class="col-md-10">Nazwa</th>
+                    <th class="col-md-2"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.Name</td>
+                        <td>@Html.ActionLink("Użyj", "UseBranch", new { controller = "Agent", id = item.Id}, new { @class = "btn btn-default"})</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

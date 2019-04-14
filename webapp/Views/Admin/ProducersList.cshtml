@@ -1,0 +1,38 @@
+﻿@model System.Collections.Generic.IEnumerable<webapp.Models.Producer>
+
+@{
+    ViewBag.Title = "Cementownie";
+}
+
+<div class="row">
+    <div class="col-md-2"></div>
+    <div class="col-md-8">
+        <div class="row">
+            <div class="col-md-3"></div>
+            <div class="col-md-6">
+                @Html.ActionLink("Dodaj nową cementownię", "AddProducer", "Admin", new { @class = "btn btn-default" })
+            </div>
+            <div class="col-md-3"></div>
+        </div>
+        <div class="row">
+            <h3 class="text-center">Cementownie</h3>
+        </div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th class="col-md-10">Nazwa</th>
+                    <th class="col-md-2">Krajowy?</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.Name</td>
+                        <td>@(item.Country ? "Tak" : "Nie")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

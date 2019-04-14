@@ -1,0 +1,389 @@
+﻿@model webapp.Models.ViewModels.NewVisitStep4
+
+@{
+    ViewBag.Title = "Logistyka";
+
+    var numberSilos = "0";
+    var capacitySilos = "0";
+    var coveredMagazineCapacity = "0";
+    var notCoveredMagazineCapacity = "0";
+    var numberOwnCementTank = "0";
+    var numberOwnPlatformTypeCar = "0";
+    var numberOwnHDSTypeCar = "0";
+    var maxLaxDelivery = "0";
+    var maxPackedDelivery = "0";
+    
+    if(Model != null)
+    {
+        numberSilos = Model.Logistic.NumberOfSilos.ToString();
+        capacitySilos = Model.Logistic.CapacitySilos.ToString();
+        coveredMagazineCapacity = Model.Logistic.CoveredMagazineCapacity.ToString();
+        notCoveredMagazineCapacity = Model.Logistic.NotCoveredMagazineCapacity.ToString();
+        numberOwnCementTank = Model.Logistic.NumberOwnCementTank.ToString();
+        numberOwnPlatformTypeCar = Model.Logistic.NumberOwnPlatformTypeCar.ToString();
+        numberOwnHDSTypeCar = Model.Logistic.NumberOwnHDSTypeCar.ToString();
+        maxLaxDelivery = Model.Logistic.MaxLaxDelivery.ToString();
+        maxPackedDelivery = Model.Logistic.MaxPackedDelivery.ToString();
+    }
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    <input type="hidden" name="VisitId" value="@ViewBag.VisitId" />
+    <div class="row">
+        <div class="col-md-2"></div>
+        <div class="panel panel-default col-md-8">
+            <div class="panel-heading">
+                <h3 class="panel-title">Logistyka i serwis</h3>
+            </div>
+            <div class="panel-body">
+                <div class="row form-group @(ViewBag.Step2Type == 2 ? "hidden" : "")">
+                    <div class="col-md-6">
+                        @Html.DisplayNameFor(model => model.Logistic.NumberOfSilos)
+                    </div>
+                    <div class="col-md-3">
+                        @Html.TextBoxFor(model => model.Logistic.NumberOfSilos, new { @Value = numberSilos, @class = "col-md-12 form-control", type = "number" })
+                    </div>
+                </div>
+
+                <div class="row form-group @(ViewBag.Step2Type == 2 ? "hidden" : "")">
+                    <div class="col-md-6">
+                        @Html.DisplayNameFor(model => model.Logistic.CapacitySilos)
+                    </div>
+                    <div class="col-md-3">
+                        @Html.TextBoxFor(model => model.Logistic.CapacitySilos, new { @Value = capacitySilos, @class = "col-md-12 form-control", type = "number" })
+                    </div>
+                    <div class="col-md-3">
+                        ton
+                    </div>
+                </div>
+
+                <div class="row form-group @(ViewBag.Step2Type == 1 ? "hidden" : "")">
+                    <div class="col-md-6">
+                        @Html.DisplayNameFor(model => model.Logistic.CoveredMagazineCapacity)
+                    </div>
+                    <div class="col-md-3">
+                        @Html.TextBoxFor(model => model.Logistic.CoveredMagazineCapacity, new { @Value = coveredMagazineCapacity, @class = "col-md-12 form-control", type = "number" })
+                    </div>
+                    <div class="col-md-3">
+                        sztuk palet
+                    </div>
+                </div>
+
+                <div class="row form-group @(ViewBag.Step2Type == 1 ? "hidden" : "")">
+                    <div class="col-md-6">
+                        @Html.DisplayNameFor(model => model.Logistic.NotCoveredMagazineCapacity)
+                    </div>
+                    <div class="col-md-3">
+                        @Html.TextBoxFor(model => model.Logistic.NotCoveredMagazineCapacity, new { @Value = notCoveredMagazineCapacity, @class = "col-md-12 form-control", type = "number" })
+                    </div>
+                    <div class="col-md-3">
+                        sztuk palet
+                    </div>
+                </div>
+
+                <div class="row form-group @(ViewBag.Step2Type == 2 ? "hidden" : "")">
+                    <div class="col-md-6">
+                        @Html.DisplayNameFor(model => model.Logistic.RailwaySiding)
+                    </div>
+                    <div class="col-md-6">
+                        <select id="Logistic_RailwaySiding" name="Logistic.RailwaySiding" class="form-control col-md-12">
+                            <option value="1" @(Model != null && Model.Logistic.RailwaySiding == 1 ? "selected" : "")>Brak danych</option>
+                            <option value="2" @(Model != null && Model.Logistic.RailwaySiding == 2 ? "selected" : "")>Tak</option>
+                            <option value="3" @(Model != null && Model.Logistic.RailwaySiding == 3 ? "selected" : "")>Nie</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="receiveByRailwaySiding" class="row form-group @(ViewBag.Step2Type == 2 ? "hidden" : "")">
+                    <div class="col-md-6">
+                        @Html.DisplayNameFor(model => model.Logistic.ReceiveCementByRailwaySiding)
+                    </div>
+                    <div class="col-md-6">
+                        <select name="Logistic.ReceiveCementByRailwaySiding" class="form-control col-md-12">
+                            <option value="1" @(Model != null && Model.Logistic.ReceiveCementByRailwaySiding == 1 ? "selected" : "")>Brak danych</option>
+                            <option value="2" @(Model != null && Model.Logistic.ReceiveCementByRailwaySiding == 2 ? "selected" : "")>Tak</option>
+                            <option value="3" @(Model != null && Model.Logistic.ReceiveCementByRailwaySiding == 3 ? "selected" : "")>Nie</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row form-group @(ViewBag.Step2Type == 2 ? "hidden" : "")">
+                    <div class="col-md-6">
+                        @Html.DisplayNameFor(model => model.Logistic.OwnCementTank)
+                    </div>
+                    <div class="col-md-6">
+                        <select id="Logistic_OwnCementTank" name="Logistic.OwnCementTank" class="form-control col-md-12">
+                            <option value="1" @(Model != null && Model.Logistic.OwnCementTank == 1 ? "selected" : "")>Brak danych</option>
+                            <option value="2" @(Model != null && Model.Logistic.OwnCementTank == 2 ? "selected" : "")>Tak</option>
+                            <option value="3" @(Model != null && Model.Logistic.OwnCementTank == 3 ? "selected" : "")>Nie</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="ownTank" class="row form-group @((Model != null && Model.Logistic.OwnCementTank != 2) || ViewBag.Step2Type == 2 ? "hidden" : "")">
+                    <div class="col-md-6">
+                        @Html.DisplayNameFor(model => model.Logistic.NumberOwnCementTank)
+                    </div>
+                    <div class="col-md-3">
+                        @Html.TextBoxFor(model => model.Logistic.NumberOwnCementTank, new { @Value = numberOwnCementTank, @class = "col-md-12 form-control", type = "number" })
+                    </div>
+                </div>
+
+                <div class="row form-group @(ViewBag.Step2Type == 1 ? "hidden" : "")">
+                    <div class="col-md-6">
+                        @Html.DisplayNameFor(model => model.Logistic.OwnPlatformTypeCar)
+                    </div>
+                    <div class="col-md-6">
+                        <select id="Logistic_OwnPlatformTypeCar" name="Logistic.OwnPlatformTypeCar" class="form-control col-md-12">
+                            <option value="1" @(Model != null && Model.Logistic.OwnPlatformTypeCar == 1 ? "selected" : "")>Brak danych</option>
+                            <option value="2" @(Model != null && Model.Logistic.OwnPlatformTypeCar == 2 ? "selected" : "")>Tak</option>
+                            <option value="3" @(Model != null && Model.Logistic.OwnPlatformTypeCar == 3 ? "selected" : "")>Nie</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="ownPlatform" class="row form-group @((Model != null && Model.Logistic.OwnPlatformTypeCar != 2) || ViewBag.Step2Type == 1 ? "hidden" : "")">
+                    <div class="col-md-6">
+                        @Html.DisplayNameFor(model => model.Logistic.NumberOwnPlatformTypeCar)
+                    </div>
+                    <div class="col-md-3">
+                        @Html.TextBoxFor(model => model.Logistic.NumberOwnPlatformTypeCar, new { @Value = numberOwnPlatformTypeCar, @class = "col-md-12 form-control", type = "number" })
+                    </div>
+                </div>
+
+                <div class="row form-group @(ViewBag.Step2Type == 1 ? "hidden" : "")">
+                    <div class="col-md-6">
+                        @Html.DisplayNameFor(model => model.Logistic.OwnHDSTypeCar)
+                    </div>
+                    <div class="col-md-6">
+                        <select id="Logistic_OwnHDSTypeCar" name="Logistic.OwnHDSTypeCar" class="form-control col-md-12">
+                            <option value="1" @(Model != null && Model.Logistic.OwnHDSTypeCar == 1 ? "selected" : "")>Brak danych</option>
+                            <option value="2" @(Model != null && Model.Logistic.OwnHDSTypeCar == 2 ? "selected" : "")>Tak</option>
+                            <option value="3" @(Model != null && Model.Logistic.OwnHDSTypeCar == 3 ? "selected" : "")>Nie</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="ownHDS" class="row form-group @((Model != null && Model.Logistic.OwnHDSTypeCar != 2) || ViewBag.Step2Type == 1 ? "hidden" : "")">
+                    <div class="col-md-6">
+                        @Html.DisplayNameFor(model => model.Logistic.NumberOwnHDSTypeCar)
+                    </div>
+                    <div class="col-md-3">
+                        @Html.TextBoxFor(model => model.Logistic.NumberOwnHDSTypeCar, new { @Value = numberOwnHDSTypeCar, @class = "col-md-12 form-control", type = "number" })
+                    </div>
+                </div>
+
+                <div id="countryLicense" class="row form-group @((Model != null && Model.Logistic.OwnCementTank != 2) || ViewBag.Step2Type == 2 ? "hidden" : "")">
+                    <div class="col-md-6">
+                        @Html.DisplayNameFor(model => model.Logistic.CountryLicense)
+                    </div>
+                    <div class="col-md-6">
+                        <select name="Logistic.CountryLicense" class="form-control col-md-12">
+                            <option value="1" @(Model != null && Model.Logistic.CountryLicense == 1 ? "selected" : "")>Brak danych</option>
+                            <option value="2" @(Model != null && Model.Logistic.CountryLicense == 2 ? "selected" : "")>Tak</option>
+                            <option value="3" @(Model != null && Model.Logistic.CountryLicense == 3 ? "selected" : "")>Nie</option>
+                            <option value="4" @(Model != null && Model.Logistic.CountryLicense == 4 ? "selected" : "")>Nie dotyczy</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="abroadLicense" class="row form-group  @((Model != null && Model.Logistic.OwnCementTank != 2) || ViewBag.Step2Type == 2 ? "hidden" : "")">
+                    <div class="col-md-6">
+                        @Html.DisplayNameFor(model => model.Logistic.AbroadLicense)
+                    </div>
+                    <div class="col-md-6">
+                        <select name="Logistic.AbroadLicense" class="form-control col-md-12">
+                            <option value="1" @(Model != null && Model.Logistic.AbroadLicense == 1 ? "selected" : "")>Brak danych</option>
+                            <option value="2" @(Model != null && Model.Logistic.AbroadLicense == 2 ? "selected" : "")>Tak</option>
+                            <option value="3" @(Model != null && Model.Logistic.AbroadLicense == 3 ? "selected" : "")>Nie</option>
+                            <option value="4" @(Model != null && Model.Logistic.AbroadLicense == 4 ? "selected" : "")>Nie dotyczy</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row form-group  @(ViewBag.Step2Type == 1 ? "hidden" : "")">
+                    <div class="col-md-6">
+                        <label>Typ rozładunku</label>
+                    </div>
+                    <div class="col-md-6">
+                        @for (int i = 0; i < 3; i++)
+                        {
+                            <input type="checkbox" value="true" name="UnloadTypes[@i].Checked" @(Model != null && Model.UnloadTypes != null && Model.UnloadTypes.ElementAt(i).Checked ? "checked" : "") /><input type="hidden" value="false" name="UnloadTypes[@i].Checked" />@ViewBag.UnloadTypes[i].Name <br />
+                            <input type="hidden" name="UnloadTypes[@i].Id" value="@ViewBag.UnloadTypes[i].Id" />
+                        }
+                    </div>
+                </div>
+
+                <div class="row form-group">
+                    <div class="col-md-12">
+                        <h4>Dostawy cało samochodowe</h4>
+                    </div>
+                </div>
+
+                <div class="row form-group @(ViewBag.Step2Type == 2 ? "hidden" : "")">
+                    <div class="col-md-6">
+                        @Html.DisplayNameFor(model => model.Logistic.LaxDelivery)
+                    </div>
+                    <div class="col-md-6">
+                        <select id="Logistic_LaxDelivery" name="Logistic.LaxDelivery" class="form-control col-md-12">
+                            <option value="1" @(Model != null && Model.Logistic.LaxDelivery == 1 ? "selected" : "")>Brak danych</option>
+                            <option value="2" @(Model != null && Model.Logistic.LaxDelivery == 2 ? "selected" : "")>Tak</option>
+                            <option value="3" @(Model != null && Model.Logistic.LaxDelivery == 3 ? "selected" : "")>Nie</option>
+                            <option value="4" @(Model != null && Model.Logistic.LaxDelivery == 4 ? "selected" : "")>Nie dotyczy</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="maxLax" class="row form-group @((Model != null && Model.Logistic.LaxDelivery != 3) || ViewBag.Step2Type == 2 ? "hidden" : "")">
+                    <div class="col-md-6">
+                        @Html.DisplayNameFor(model => model.Logistic.MaxLaxDelivery)
+                    </div>
+                    <div class="col-md-3">
+                        @Html.TextBoxFor(model => model.Logistic.MaxLaxDelivery, new { @Value = maxLaxDelivery, @class = "col-md-12 form-control", type = "number" })
+                    </div>
+                    <div class="col-md-3">
+                        ton
+                    </div>
+                </div>
+
+                <div class="row form-group @(ViewBag.Step2Type == 1 ? "hidden" : "")">
+                    <div class="col-md-6">
+                        @Html.DisplayNameFor(model => model.Logistic.PackedDelivery)
+                    </div>
+                    <div class="col-md-6">
+                        <select id="Logistic_PackedDelivery" name="Logistic.PackedDelivery" class="form-control col-md-12">
+                            <option value="1" @(Model != null && Model.Logistic.PackedDelivery == 1 ? "selected" : "")>Brak danych</option>
+                            <option value="2" @(Model != null && Model.Logistic.PackedDelivery == 2 ? "selected" : "")>Tak</option>
+                            <option value="3" @(Model != null && Model.Logistic.PackedDelivery == 3 ? "selected" : "")>Nie</option>
+                            <option value="4" @(Model != null && Model.Logistic.PackedDelivery == 4 ? "selected" : "")>Nie dotyczy</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="maxPacked" class="row form-group @((Model != null && Model.Logistic.PackedDelivery != 3) || ViewBag.Step2Type == 1 ? "hidden" : "")">
+                    <div class="col-md-6">
+                        @Html.DisplayNameFor(model => model.Logistic.MaxPackedDelivery)
+                    </div>
+                    <div class="col-md-3">
+                        @Html.TextBoxFor(model => model.Logistic.MaxPackedDelivery, new { @Value = maxPackedDelivery, @class = "col-md-12 form-control", type = "number" })
+                    </div>
+                    <div class="col-md-3">
+                        ton
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="col-md-2"></div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-2"></div>
+        <div class="col-md-8">
+            <button type="submit" class="btn btn-primary btn-block">Dalej</button>
+            <div class="col-md-12" id="branches">
+
+            </div>
+        </div>
+        <div class="col-md-2"></div>
+    </div>
+
+
+}
+
+<script>
+    $(function () {
+        $("#Logistic_RailwaySiding").on("change", function () {
+            if (this.value == "2") {
+                if ($("#receiveByRailwaySiding").hasClass("hidden")) {
+                    $("#receiveByRailwaySiding").removeClass("hidden");
+                }
+            }
+            else {
+                if (!$("#receiveByRailwaySiding").hasClass("hidden")) {
+                    $("#receiveByRailwaySiding").addClass("hidden");
+                }
+            }
+        });
+
+        $("#Logistic_PackedDelivery").on("change", function () {
+            if (this.value == "3") {
+                if ($("#maxPacked").hasClass("hidden")) {
+                    $("#maxPacked").removeClass("hidden");
+                }
+            }
+            else {
+                if (!$("#maxPacked").hasClass("hidden")) {
+                    $("#maxPacked").addClass("hidden");
+                }
+            }
+        });
+
+        $("#Logistic_LaxDelivery").on("change", function () {
+            if (this.value == "3") {
+                if ($("#maxLax").hasClass("hidden")) {
+                    $("#maxLax").removeClass("hidden");
+                }
+            }
+            else {
+                if (!$("#maxLax").hasClass("hidden")) {
+                    $("#maxLax").addClass("hidden");
+                }
+            }
+        });
+
+        $("#Logistic_OwnHDSTypeCar").on("change", function () {
+            if (this.value == "2") {
+                if ($("#ownHDS").hasClass("hidden")) {
+                    $("#ownHDS").removeClass("hidden");
+                }
+            }
+            else {
+                if (!$("#ownHDS").hasClass("hidden")) {
+                    $("#ownHDS").addClass("hidden");
+                }
+            }
+        });
+
+        $("#Logistic_OwnPlatformTypeCar").on("change", function () {
+            if (this.value == "2") {
+                if ($("#ownPlatform").hasClass("hidden")) {
+                    $("#ownPlatform").removeClass("hidden");
+                }
+            }
+            else {
+                if (!$("#ownPlatform").hasClass("hidden")) {
+                    $("#ownPlatform").addClass("hidden");
+                }
+            }
+        });
+
+        $("#Logistic_OwnCementTank").on("change", function () {
+            if (this.value == "2") {
+                if ($("#ownTank").hasClass("hidden")) {
+                    $("#ownTank").removeClass("hidden");
+                }
+                if ($("#countryLicense").hasClass("hidden")) {
+                    $("#countryLicense").removeClass("hidden");
+                }
+                if ($("#abroadLicense").hasClass("hidden")) {
+                    $("#abroadLicense").removeClass("hidden");
+                }
+            }
+            else {
+                if (!$("#ownTank").hasClass("hidden")) {
+                    $("#ownTank").addClass("hidden");
+                }
+                if (!$("#countryLicense").hasClass("hidden")) {
+                    $("#countryLicense").addClass("hidden");
+                }
+                if (!$("#abroadLicense").hasClass("hidden")) {
+                    $("#abroadLicense").addClass("hidden");
+                }
+            }
+        });
+    });
+</script>

@@ -1,0 +1,99 @@
+﻿<nav class="navbar navbar-default" role="navigation">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#collapse-navbar">
+                <span class="sr-only">Przełącz nawigację</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">@ViewBag.Title</a>
+        </div>
+        <div class="collapse navbar-collapse" id="collapse-navbar">
+            @if (!User.Identity.IsAuthenticated)
+            {
+                <ul class="nav navbar-nav navbar-right">
+                    <li>@Html.ActionLink("Zaloguj", "Login")</li>
+                    <li>@Html.ActionLink("Zarejestruj się", "Register")</li>
+                </ul>
+            }
+            else if(((webapp.Security.CustomPrincipal)User).CustomIdentity.UserRoleName == "unactive")
+            {
+                <ul class="nav navbar-nav navbar-right">
+                    <li>@Html.ActionLink("Wyloguj", "Login", "Account")</li>
+                </ul>
+            }
+            else if (((webapp.Security.CustomPrincipal)User).CustomIdentity.UserRoleName == "agent")
+            {
+                <ul class="nav navbar-nav navbar-right">
+                    <li>@Html.ActionLink("Strona główna", "Index", "Home")</li>
+                    <li class="bg-info">@Html.ActionLink("Dodaj", "Add", "Agent")</li>
+                    <li>@Html.ActionLink("Zadania", "Tasks", "Agent")</li>
+                    <li>@Html.ActionLink("Kalendarz", "Index", "Home")</li>
+                    <li>@Html.ActionLink("Eksport", "Index", "Home")</li>
+                    <li>@Html.ActionLink("Wyloguj", "Login", "Account")</li>
+                </ul>
+            }
+            else if (((webapp.Security.CustomPrincipal)User).CustomIdentity.UserRoleName == "manager")
+            {
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Raporty <span class="caret"></span></a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li><a href="/Manager/ReportAnnual">Roczne zapotrzebowanie</a></li>
+                            <li><a href="/Manager/ReportCements">Cementy</a></li>
+                            <li><a href="/Manager/ReportGroups">Grupy producentów</a></li>
+                            <li><a href="/Manager/ReportPrices">Średnie ceny zakupu/sprzedaży</a></li>
+                            <li><a href="/Manager/GetCementPercentReport">Raport cementy braki</a></li>
+                            <li><a href="/Manager/GetReport">Raport ogólny</a></li>
+                            <li><a href="/Manager/GetCementPriceItemsReport">Raport - błędy w cenach</a></li>
+                            <li><a href="/Manager/GetCementGroupsReport">Raport - błędy w grupach</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Mapa <span class="caret"></span></a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li><a href="/Client/ProducersMap">Producenci</a></li>
+                            <li><a href="/Client/DistributorsMap">Dystrybutorzy</a></li>
+                        </ul>
+                    </li>
+                    <li>@Html.ActionLink("Wyloguj", "Login", "Account")</li>
+                </ul>
+            }
+            else if (((webapp.Security.CustomPrincipal)User).CustomIdentity.UserRoleName == "admin")
+            {
+                <ul class="nav navbar-nav">
+                    <li>@Html.ActionLink("Użytkownicy", "Users")</li>
+                    <li>@Html.ActionLink("Producenci - grupy", "Groups", "Admin")</li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Raporty <span class="caret"></span></a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li><a href="/Admin/NoDistributors">Firmy bez dystrybutorów</a></li>
+                            <li><a href="/Admin/HavePrices">Firmy z wprowadzoną ceną zakupu i sprzedaży</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Baza danych <span class="caret"></span></a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li>@Html.ActionLink("Cementownie", "ProducersList")</li>
+                            <li>@Html.ActionLink("Cementy luz", "LaxCementsList")</li>
+                            <li>@Html.ActionLink("Cementy pakowane", "PackedCementsList")</li>
+                            <li>@Html.ActionLink("Szukaj firmy", "SearchClient")</li>
+                            <li>@Html.ActionLink("Dystrybutorzy", "Distributors")</li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Ustawienia <span class="caret"></span></a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li><a href="@Url.Action("AddFile", "Admin")">Dodatkowe dane do raportu</a></li>
+                            <li><a href="@Url.Action("LoadPostCodes", "Admin")">Wczytaj kody pocztowe</a></li>
+                        </ul>
+                    </li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li>@Html.ActionLink("Wyloguj", "Login", "Account")</li>
+                </ul>
+            }
+        </div>
+    </div>
+</nav>

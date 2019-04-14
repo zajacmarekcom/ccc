@@ -1,0 +1,168 @@
+﻿@model webapp.Models.ClientStep6
+
+@{
+    ViewBag.Title = "Inne";
+    var labs = 0;
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    <input type="hidden" name="VisitId" value="@ViewBag.VisitId" />
+    <div class="row">
+        <div class="col-md-2"></div>
+        <div class="panel panel-default col-md-8">
+            <div class="panel-heading">
+                <h3 class="panel-title">Inne</h3>
+            </div>
+            <div class="panel-body">
+
+                <div class="row form-group">
+                    <div class="col-md-6">
+                        <label>Laboratorium własne</label>
+                    </div>
+                    <div class="col-md-6">
+                        <select name="OwnLaboratory" class="form-control col-md-12">
+                            <option value="1" @(Model != null && Model.OwnLaboratory == 1 ? "selected" : "")>Brak danych</option>
+                            <option value="2" @(Model != null && Model.OwnLaboratory == 2 ? "selected" : "")>Tak</option>
+                            <option value="3" @(Model != null && Model.OwnLaboratory == 3 ? "selected" : "")>Nie</option>
+                            <option value="4" @(Model != null && Model.OwnLaboratory == 4 ? "selected" : "")>Nie dotyczy</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row form-group">
+                    <div class="col-md-6">
+                        <label>Laboratorium obce</label>
+                    </div>
+                    <div class="col-md-6">
+                        <select id="foreign" name="ForeignLaboratory" class="form-control col-md-12">
+                            <option value="1" @(Model != null && Model.ForeignLaboratory == 1 ? "selected" : "")>Brak danych</option>
+                            <option value="2" @(Model != null && Model.ForeignLaboratory == 2 ? "selected" : "")>Tak</option>
+                            <option value="3" @(Model != null && Model.ForeignLaboratory == 3 ? "selected" : "")>Nie</option>
+                            <option value="4" @(Model != null && Model.ForeignLaboratory == 4 ? "selected" : "")>Nie dotyczy</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="foreignLaboratories" class="@(Model == null || Model.ForeignLaboratory != 2 ? "hidden" : "") col-md-12">
+                    <div class="row">
+                        <div class="col-md-5"></div>
+                        <div class="col-md-2"><button type="button" class="btn btn-default" onclick="javascript: AddLaboratory();">Dodaj</button></div>
+                        <div class="col-md-5"></div>
+                    </div>
+                    <table class="table col-md-12">
+                        <thead>
+                            <tr>
+                                <th class="col-md-5">Nazwa laboratorium</th>
+                                <th class="col-md-3">Kwota roczna na usługi laboratoryjne</th>
+                                <th class="col-md-3">Barter</th>
+                                <th class="col-md-1"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="laboratoriesList">
+                            @if (Model != null && Model.ForeignLaboratories != null)
+                            {
+                                foreach (webapp.Models.ForeignLaboratoryInfo i in Model.ForeignLaboratories)
+                                {
+                                    <tr>
+                                        <td>
+                                            <input type='text' class='form-control' name='ForeignLaboratories[@labs].Name' value="@i.Name"/>
+                                        </td>
+                                        <td>
+                                            <div class='row'>
+                                                <div class='col-md-9'>
+                                                    <input type='number' name='ForeignLaboratories[@labs].AnnualAmount' class='col-md-6 form-control' value='@i.AnnualAmount' />
+                                                </div>
+                                                <div class='col-md-2'>zł</div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <select name='ForeignLaboratories[@labs].Barter' class='form-control'>
+                                                <option value='false' @(!i.Barter ? "selected" : "")>Nie</option>
+                                                <option value='true' @(i.Barter ? "selected" : "")>Tak</option>
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <button type='button' class='btn btn-default' onclick='javascript: RemoveLaboratory(this);'>Usuń</button>
+                                        </td>
+                                    </tr>
+                                    labs++;
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+        <div class="col-md-2"></div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-2"></div>
+        <div class="col-md-8">
+            <button type="submit" class="btn btn-primary btn-block">Dalej</button>
+            <div class="col-md-12" id="branches">
+
+            </div>
+        </div>
+        <div class="col-md-2"></div>
+    </div>
+
+
+}
+
+<script>
+    var labCounter = @(labs);
+
+    function AddLaboratory() {
+        var html = "<tr>" +
+            "<td><input type='text' class='form-control' name='ForeignLaboratories[" + labCounter + "].Name'/></td>" +
+            "<td><div class='row'><div class='col-md-9'><input type='number' name='ForeignLaboratories[" + labCounter + "].AnnualAmount' class='col-md-6 form-control' value='0'/></div><div class='col-md-2'>zł</div></div></td>" +
+            "<td><select name='ForeignLaboratories[" + labCounter + "].Barter' class='form-control'><option value='false'>Nie</option><option value='true'>Tak</option></select></td>" +
+            "<td><button type='button' class='btn btn-default' onclick='javascript: RemoveLaboratory(this);' >Usuń</button></td>" +
+            "</tr>";
+
+        labCounter++;
+
+        $("#laboratoriesList").append(html);
+    }
+
+    function RemoveLaboratory(button) {
+        var parent = button.parentNode.parentNode.parentNode;
+        parent.removeChild(button.parentNode.parentNode);
+
+        labCounter = 0;
+        $("#laboratoriesList tr").each(function () {
+            $(this).find("input[name]").each(function () {
+                var name = $(this).attr("name");
+                name = name.replace(/\[.*?\]/g, "[" + labCounter + "]");
+                $(this).attr("name", name);
+            });
+            $(this).find("select[name]").each(function () {
+                var name = $(this).attr("name");
+                name = name.replace(/\[.*?\]/g, "[" + labCounter + "]");
+                $(this).attr("name", name);
+            });
+
+            labCounter++;
+        });
+    }
+
+    $(function () {
+        $("#foreign").on("change", function () {
+            if (this.value == "2") {
+                if ($("#foreignLaboratories").hasClass("hidden")) {
+                    $("#foreignLaboratories").removeClass("hidden");
+                }
+            }
+            else {
+                if (!$("#foreignLaboratories").hasClass("hidden")) {
+                    $("#foreignLaboratories").addClass("hidden");
+                }
+            }
+        });
+    });
+</script>

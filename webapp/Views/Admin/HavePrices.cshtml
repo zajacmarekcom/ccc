@@ -1,0 +1,40 @@
+﻿@model IEnumerable<webapp.Models.ViewModels.BusinessUserViewModel>
+
+@{
+    ViewBag.Title = "Raport - firmy z wprowadzoną ceną zakupu i sprzedaży";
+}
+
+<div class="row">
+    <div class="col-md-2"></div>
+    <div class="col-md-8">
+        <div class="row">
+            <div class="col-md-3"></div>
+            <div class="col-md-6">
+                @Html.ActionLink("Pobież jako XLS", "HavePricesXLS", "Admin", new { @class = "btn btn-default" })
+            </div>
+            <div class="col-md-3"></div>
+        </div>
+        <div class="row">
+            <h3 class="text-center">Firmy z wprowadzoną ceną zakupu i sprzedaży</h3>
+        </div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Nazwa</th>
+                    <th>Miejscowość</th>
+                    <th>Użytkownik</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.Name</td>
+                        <td>@item.City</td>
+                        <td>@item.User</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

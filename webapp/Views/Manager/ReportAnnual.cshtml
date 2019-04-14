@@ -1,0 +1,40 @@
+﻿@model System.Collections.Generic.IEnumerable<webapp.Models.ViewModels.ReportAnnualViewModel>
+
+@{
+    ViewBag.Title = "Raport - roczne zapotrzebowanie";
+}
+
+<div class="row">
+    <div class="col-md-2"></div>
+    <div class="col-md-8">
+        <div class="row">
+            <div class="col-md-3"></div>
+            <div class="col-md-6">
+                @Html.ActionLink("Pobież jako XLS", "GetReportAnnualXLS", "Manager", new { @class = "btn btn-default" })
+            </div>
+            <div class="col-md-3"></div>
+        </div>
+        <div class="row">
+            <h3 class="text-center">Raport rocznego zapotrzebowania</h3>
+        </div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Nazwa</th>
+                    <th>Miejscowość</th>
+                    <th>Roczne zapotrzebowanie</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.Name</td>
+                        <td>@item.City</td>
+                        <td>@item.Annual ton</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -1,0 +1,49 @@
+﻿@model IEnumerable<webapp.Models.Distributor>
+
+@{
+    ViewBag.Title = "Dystrybutorzy";
+}
+
+<div class="row">
+    <div class="col-md-2"></div>
+    <div class="col-md-8">
+        <div class="row">
+            <div class="col-md-3"></div>
+            <div class="col-md-6">
+                @Html.ActionLink("Dodaj nowego dystrybutora", "AddDistributor", "Admin", new { @class = "btn btn-default" })
+            </div>
+            <div class="col-md-3"></div>
+        </div>
+        <div class="row">
+            <div class="col-md-3"></div>
+            <div class="col-md-6">
+                @Html.ValidationSummary()
+            </div>
+            <div class="col-md-3"></div>
+        </div>
+        <div class="row">
+            <h3 class="text-center">Cementownie</h3>
+        </div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th class="col-md-6">Nazwa</th>
+                    <th class="col-md-4">NIP</th>
+                    <th class="col-md-1">Jest marketem?</th>
+                    <th class="col-md-1"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@Html.ActionLink(item.Name, "DistributorDetails", new { id = item.Id })</td>
+                        <td>@item.NIP</td>
+                        <td>@(item.IsMarket ? "Tak" : "Nie")</td>
+                        <td>@Html.ActionLink("Usuń", "DeleteDistributor", new { id = item.Id}, new { @class = "btn btn-default" })</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

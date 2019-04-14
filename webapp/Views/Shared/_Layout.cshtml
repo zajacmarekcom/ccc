@@ -1,0 +1,25 @@
+﻿<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width" />
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+</head>
+<body>
+    <div class="container" style="margin-top: 30px;">
+        @{Html.RenderPartial("_Navigation");}
+        <div>
+            @Scripts.Render("~/bundles/jquery")
+            @RenderBody()
+        </div>
+    </div>
+    <script src="~/Scripts/jquery.validate.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.js"></script>
+    <script src="~/Scripts/jquery.unobtrusive-ajax.js"></script>
+    <script>
+        $.validator.methods["date"] = function (value, element) { return true; }
+    </script>
+</body>
+</html>

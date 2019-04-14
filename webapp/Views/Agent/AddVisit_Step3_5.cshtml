@@ -1,0 +1,998 @@
+﻿@model webapp.Models.ViewModels.NewVisitStep3_5
+
+@{
+    ViewBag.Title = "Odbiory";
+    int i = 0;
+    int manufs = 0;
+    int manufs2 = 0;
+    int manuGroups = 0;
+    int sups = -1;
+    int dists = 0;
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    <input type="hidden" name="VisitId" value="@ViewBag.VisitId" />
+    <div class="row">
+        <div class="col-md-1"></div>
+        <div class="panel panel-default col-md-10">
+            <div class="panel-heading">
+                <h3 class="panel-title">Odbiory</h3>
+            </div>
+            <div class="panel-body">
+                <div id="suppliersField">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label>Rodzaj odbioru</label>
+                        </div>
+                    </div>
+
+                    <div class="row form-group">
+                        <div class="col-md-12">
+                            <select class="form-control receiptId" name="ReceiptId">
+                                @for (int ii = 0; ii < 3; ii++)
+                                {
+                                    <option value="@Model.Receipts.ElementAt(ii).Id" @(Model != null && Model.ReceiptId == Model.Receipts.ElementAt(ii).Id ? "selected" : "")>@Model.Receipts.ElementAt(ii).Name</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div id="receipt_1" class="@(Model != null && Model.ReceiptId == 1 || Model.ReceiptId == 3 ? "" : "hidden")">
+                    <div class="col-md-12">
+                        <label>Odbiór bezpośredni</label>
+                    </div>
+                    @foreach (var c in ((List<webapp.Models.Country>)ViewBag.Countries))
+                    {
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label>@c.Name</label>
+                            </div>
+                        </div>
+
+                        foreach (webapp.Models.ManufacturersGroup m in ViewBag.ManufacturersGroups)
+                        {
+                            if (m.CountryId == c.Id)
+                            {
+                                var value = "0";
+                                var ckd = "";
+                                var disabled = "readonly=readonly";
+                                var sel = "false";
+                                if (Model != null && Model.R1 != null && Model.R1.ManufacturersGroups != null)
+                                {
+                                    foreach (webapp.Models.SelectedManufacturersGroups g in Model.R1.ManufacturersGroups)
+                                    {
+                                        if (m.Id == g.Id)
+                                        {
+                                            value = g.Percent.ToString();
+                                            if (g.Checked)
+                                            {
+                                                ckd = "checked";
+                                                disabled = "";
+                                                if (g.SelectedManufacturers)
+                                                {
+                                                    sel = "true";
+                                                    disabled = "readonly=readonly";
+                                                }
+                                            }
+                                            break;
+                                        }
+                                    }
+                                }
+                                <div class="row form-group group">
+                                    <div class="col-md-6">
+                                        <input type="hidden" id="group[@m.Id]selected" name="R1.ManufacturersGroups[@manuGroups].SelectedManufacturers" value="@sel" />
+                                        <input type='checkbox' value='true' class='manufacturerCheckbox' @ckd name='R1.ManufacturersGroups[@manuGroups].Checked' /><input type='hidden' value='false' name='R1.ManufacturersGroups[@manuGroups].Checked' />
+                                        @m.Name
+                                    </div>
+                                    <div class="col-md-3">
+                                        <input type="hidden" class="hiddenId" name="R1.ManufacturersGroups[@manuGroups].Id" value="@m.Id">
+                                        <input class='form-control percentBox' type='number' @disabled id='group[@m.Id]percent' name='R1.ManufacturersGroups[@manuGroups].Percent' value='@value' />
+                                    </div>
+                                    <div class="col-md-1">
+                                        %
+                                    </div>
+                                    <div class="col-md-2">
+                                        <button class="btn btn-default" type="button" data-toggle='modal' data-target='#group-@m.Id'>Określ zakład</button>
+                                    </div>
+                                </div>
+                                <div class="modal fade" id="group-@m.Id" tabindex="-1" role="dialog" aria-labelledby="label-group-@m.Id" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h4 class="modal-title" id="label-group-@m.Id">@m.Name</h4>
+                                            </div>
+                                            <div class="modal-body">
+                                                @{
+                                // manufs = 0;
+                                                }
+                                                @foreach (var manu in ViewBag.Manufacturers)
+                                                {
+                                                    if (manu.GroupId == m.Id)
+                                                    {
+                                                        ckd = "";
+                                                        disabled = "readonly=readonly";
+                                                        var percent = 0;
+                                                        if (Model != null && Model.R1 != null && Model.R1.Manufacturers != null)
+                                                        {
+                                                            foreach (var mm in Model.R1.Manufacturers)
+                                                            {
+                                                                if (mm.Id == manu.Id && mm.Checked)
+                                                                {
+                                                                    disabled = "";
+                                                                    ckd = "checked";
+                                                                    percent = mm.Percent;
+                                                                }
+                                                            }
+                                                        }
+                                                        <div class="col-md-12 row form-group groupMan">
+                                                            <div class="col-md-1">
+                                                                <input type="checkbox" value="true" @ckd class="groupCheckbox" name="R1.Manufacturers[@manufs].Checked" /><input type="hidden" value="false" name="R1.Manufacturers[@manufs].Checked" />
+                                                            </div>
+                                                            <div class="col-md-7">
+                                                                <input type="hidden" class="hiddenId" name="R1.Manufacturers[@manufs].GroupId" value="@manu.GroupId" />
+                                                                <input type="hidden" name="R1.Manufacturers[@manufs].Id" value="@manu.Id" />@manu.Name
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                <input class="form-control percentBox groupPercentBox" type="number" @disabled name="R1.Manufacturers[@manufs].Percent" value="@percent" />
+                                                            </div>
+                                                            <div class="col-md-1">
+                                                                %
+                                                            </div>
+
+                                                        </div>
+                                                        manufs++;
+                                                    }
+                                                }
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-primary" data-dismiss="modal">Ok</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                                manuGroups++;
+                            }
+                        }
+                        foreach (webapp.Models.Manufacturer m in ViewBag.Manufacturers)
+                        {
+                            if (m.CountryId == c.Id && m.GroupId == 0)
+                            {
+                                var value = "0";
+                                var ckd = "";
+                                var disabled = "readonly=readonly";
+                                if (Model != null && Model.R1 != null && Model.R1.Manufacturers != null)
+                                {
+                                    foreach (webapp.Models.SelectedManufacturers sm in Model.R1.Manufacturers)
+                                    {
+                                        if (m.Id == sm.Id)
+                                        {
+                                            value = sm.Percent.ToString();
+                                            if (sm.Checked)
+                                            {
+                                                ckd = "checked";
+                                                disabled = "";
+                                            }
+                                        }
+                                    }
+                                }
+                                <div class="row form-group">
+                                    <div class="col-md-6">
+                                        <input type='hidden' value='@m.GroupId' name='R1.Manufacturers[@manufs].GroupId' />
+                                        <input type='checkbox' value='true' class='manufacturerCheckbox' @ckd name='R1.Manufacturers[@manufs].Checked' /><input type='hidden' value='false' name='R1.Manufacturers[@manufs].Checked' />
+                                        @m.Name
+                                    </div>
+                                    <div class="col-md-3">
+                                        <input type="hidden" name="R1.Manufacturers[@manufs].Id" value="@m.Id">
+                                        <input class='form-control percentBox' type='number' @disabled name='R1.Manufacturers[@manufs].Percent' value='@value' />
+                                    </div>
+                                    <div class="col-md-1">
+                                        %
+                                    </div>
+                                </div>
+                                manufs++;
+                            }
+                        }
+                    }
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label>Inne</label>
+                        </div>
+                    </div>
+                    @foreach (webapp.Models.Manufacturer m in ViewBag.Manufacturers)
+                    {
+                        if (m.CountryId == 0 && m.GroupId == 0)
+                        {
+                            var value = "0";
+                            var ckd = "";
+                            var disabled = "readonly=readonly";
+                            if (Model != null && Model.R1 != null && Model.R1.Manufacturers != null)
+                            {
+                                foreach (webapp.Models.SelectedManufacturers sm in Model.R1.Manufacturers)
+                                {
+                                    if (m.Id == sm.Id)
+                                    {
+                                        value = sm.Percent.ToString();
+                                        if (sm.Checked)
+                                        {
+                                            ckd = "checked";
+                                            disabled = "";
+                                        }
+                                    }
+                                }
+                            }
+                            <div class="row form-group">
+                                <div class="col-md-6">
+                                    <input type='hidden' value='0' name='R1.Manufacturers[@manufs].GroupId' />
+                                    <input type='checkbox' value='true' class='manufacturerCheckbox' @ckd name='R1.Manufacturers[@manufs].Checked' /><input type='hidden' value='false' name='R1.Manufacturers[@manufs].Checked' />
+                                    @m.Name
+                                </div>
+                                <div class="col-md-3">
+                                    <input type="hidden" name="R1.Manufacturers[@manufs].Id" value="@m.Id">
+                                    <input class='form-control percentBox' type='number' @disabled name='R1.Manufacturers[@manufs].Percent' value='@value' />
+                                </div>
+                                <div class="col-md-1">
+                                    %
+                                </div>
+                            </div>
+                            manufs++;
+                        }
+                    }
+                </div>
+
+                <div id="receipt_2" class="@(Model != null && Model.ReceiptId == 2 || Model.ReceiptId == 3 ? "" : "hidden")">
+                    <div class="col-md-12">
+                        <label>Odbiór pośredni</label>
+                        <div class="row">
+                            <div class="col-md-8 form-group">
+                                <select class="form-control col-md-12" id="dists">
+                                    @foreach (var d in ViewBag.Distributors)
+                                    {
+                                        <option value="@d.Id">@d.City - @d.Name</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <button type="button" class="col-md-12 btn btn-default" onclick="AddDistributor()">Dodaj</button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3"></div>
+                            <div class="col-md-6">
+                                <button class="btn btn-default col-md-12" type="button" data-toggle='modal' data-target='#new_distributor'>Dodaj nowego dystrybutora</button>
+                            </div>
+                            <div class="col-md-3"></div>
+                        </div>
+
+                        <div id="distributorsList">
+                            @if (Model != null && Model.R2 != null && Model.R2.Distributors != null)
+                            {
+                                foreach (webapp.Models.SelectedDistributor d in Model.R2.Distributors)
+                                {
+                                    <div class='row form-group'>
+                                        <div class='col-md-3'>
+                                            <input type='checkbox' value='true' class='manufacturerCheckbox' name='R2.Distributors[@dists].Checked' @(d.Checked ? "checked" : "") /><input type='hidden' value='false' name='R2.Distributors[@dists].Checked' />
+                                            @d.Name
+                                        </div>
+                                        <div class="col-md-4" id="addresses_@dists">
+                                            @if (d.IsMarket)
+                                            {
+                                                <select class="form-control" name='R2.Distributors[@dists].MarketAddressId'>
+                                                    <option value=""></option>
+                                                    @foreach(var address in d.Addresses)
+                                                    {
+                                                        <option value="@address.Id" @(d != null && d.MarketAddressId != null && address.Id == d.MarketAddressId ? "selected" : "")>@address.City, @address.Street @address.BuildingNumber, @address.PostCode</option>
+                                                    }
+                                                </select>
+                                            }
+                                        </div>
+                                        <div class="col-md-2">
+                                            <input type="hidden" name="R2.Distributors[@dists].Id" value="@d.Id">
+                                            <input class='form-control percentBox' type='number' @(d.Checked ? "" : "disabled") name='R2.Distributors[@dists].Percent' value='@d.Percent' />
+                                        </div>
+                                        <div class="col-md-1">
+                                            %
+                                        </div>
+                                        <div class="col-md-2">
+                                            <button class="btn btn-default" type="button" data-toggle='modal' data-target='#dist-@dists'>Określ asortyment</button>
+                                        </div>
+                                    </div>
+                                            dists++;
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-1"></div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-1"></div>
+        <div class="col-md-10">
+            <button type="submit" class="btn btn-primary btn-block">Dalej</button>
+            <div class="col-md-12" id="branches">
+
+            </div>
+        </div>
+        <div class="col-md-1"></div>
+    </div>
+    <div id="disModals">
+        @if (Model != null && Model.R2 != null && Model.R2.Distributors != null)
+        {
+            dists = 0;
+            foreach (webapp.Models.SelectedDistributor d in Model.R2.Distributors)
+            {
+                <div class="modal fade" id="dist-@dists" tabindex="-1" role="dialog" aria-labelledby="label-dist-@dists" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title" id="label-dist-@dists">Wybór asortymentu</h4>
+                            </div>
+                            <div class="modal-body">
+                                @{
+                manuGroups = 0;
+                manufs = 0;
+                                    var man2 = 0;
+                                }
+                                @foreach (var c in ((List<webapp.Models.Country>)ViewBag.Countries))
+                                {
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <label>@c.Name</label>
+                                        </div>
+                                    </div>
+                                    foreach (webapp.Models.ManufacturersGroup m in ViewBag.ManufacturersGroups)
+                                    {
+                                        if (m.CountryId == c.Id)
+                                        {
+                                            var value = "0";
+                                            var ckd = "";
+                                            var disabled = "readonly=readonly";
+                                            var sel = "false";
+                                            if (d.ManufsGroups != null)
+                                            {
+                                                foreach (webapp.Models.SelectedManufacturersGroups g in d.ManufsGroups)
+                                                {
+                                                    if (m.Id == g.Id)
+                                                    {
+                                                        value = g.Percent.ToString();
+                                                        if (g.Checked)
+                                                        {
+                                                            ckd = "checked";
+                                                            disabled = "";
+                                                            if (g.SelectedManufacturers)
+                                                            {
+                                                                sel = "true";
+                                                                disabled = "readonly=readonly";
+                                                            }
+                                                        }
+                                                        break;
+                                                    }
+                                                }
+                                            }
+                                            <div class="row form-group">
+                                                <div class="col-md-6">
+                                                    <input type="hidden" id="group[@m.Id]selected" name="R2.Distributors[@dists].ManufacturersGroups[@manuGroups].SelectedManufacturers" value="@sel" />
+                                                    <input type='checkbox' value='true' class='manufacturerCheckbox' name='R2.Distributors[@dists].ManufacturersGroups[@manuGroups].Checked' @ckd /><input type='hidden' value='false' name='R2.Distributors[@dists].ManufacturersGroups[@manuGroups].Checked' />
+                                                    @m.Name
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <input type="hidden" name="R2.Distributors[@dists].ManufacturersGroups[@manuGroups].Id" value="@m.Id">
+                                                    <input class='form-control percentBox' type='number' @disabled id='group[@m.Id]percent' name='R2.Distributors[@dists].ManufacturersGroups[@manuGroups].Percent' value='@value' />
+                                                </div>
+                                                <div class="col-md-1">
+                                                    %
+                                                </div>
+                                            </div>
+                                            foreach (var mm in ViewBag.Manufacturers)
+                                            {
+                                                ckd = "";
+                                                value = "0";
+                                                disabled = "readonly=readonly";
+                                                if (mm.GroupId == m.Id)
+                                                {
+                                                    if (d.ManufsGroups != null && d.ManufsGroups.Any(gr => gr.Id == m.Id) && d.ManufsGroups.Single(gr => gr.Id == m.Id).Manufacturers != null)
+                                                    {
+                                                        foreach (webapp.Models.SelectedManufacturers sm in d.ManufsGroups.Single(gr => gr.Id == m.Id).Manufacturers)
+                                                        {
+                                                            if (mm.Id == sm.Id)
+                                                            {
+                                                                value = sm.Percent.ToString();
+                                                                if (sm.Checked)
+                                                                {
+                                                                    ckd = "checked";
+                                                                    disabled = "";
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                    <div class="row form-group">
+                                                        <div class="col-md-1"></div>
+                                                        <div class="col-md-5">
+                                                            <input type='hidden' value='@mm.GroupId' name='R2.Distributors[@dists].ManufacturersGroups[@manuGroups].Manufacturers[@manufs].GroupId' />
+                                                            <input type='checkbox' value='true' class='manufacturerCheckbox' name='R2.Distributors[@dists].ManufacturersGroups[@manuGroups].Manufacturers[@manufs].Checked' @ckd /><input type='hidden' value='false' name='R2.Distributors[@dists].ManufacturersGroups[@manuGroups].Manufacturers[@manufs].Checked' />
+                                                            @mm.Name
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            <input type="hidden" name="R2.Distributors[@dists].ManufacturersGroups[@manuGroups].Manufacturers[@manufs].Id" value="@mm.Id">
+                                                            <input class='form-control percentBox' type='number' @disabled name='R2.Distributors[@dists].ManufacturersGroups[@manuGroups].Manufacturers[@manufs].Percent' value='@value' />
+                                                        </div>
+                                                        <div class="col-md-1">
+                                                            %
+                                                        </div>
+                                                    </div>
+                                                    manufs++;
+                                                }
+                                            }
+                                            manufs = 0;
+                                            manuGroups++;
+                                        }
+                                    }
+                                    
+                                    foreach (webapp.Models.Manufacturer man in ViewBag.Manufacturers)
+                                    {
+                                        var ckd = "";
+                                        var value = "0";
+                                        var disabled = "readonly=readonly";
+                                        if (man.CountryId == c.Id && man.GroupId == 0)
+                                        {
+                                            if (Model != null && Model.R2 != null && d.Manufacturers != null)
+                                            {
+                                                foreach (webapp.Models.SelectedManufacturers sm in d.Manufacturers)
+                                                {
+                                                    if (man.Id == sm.Id)
+                                                    {
+                                                        value = sm.Percent.ToString();
+                                                        if (sm.Checked)
+                                                        {
+                                                            ckd = "checked";
+                                                            disabled = "";
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                            <div class="row form-group">
+                                                <div class="col-md-6">
+                                                    <input type='hidden' value='@man.GroupId' name='R2.Distributors[@dists].Manufacturers[@man2].GroupId' />
+                                                    <input type='checkbox' value='true' class='manufacturerCheckbox' name='R2.Distributors[@dists].Manufacturers[@man2].Checked' @ckd /><input type='hidden' value='false' name='R2.Distributors[@dists].Manufacturers[@man2].Checked' />
+                                                    @man.Name
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <input type="hidden" name="R2.Distributors[@dists].Manufacturers[@man2].Id" value="@man.Id">
+                                                    <input class='form-control percentBox' type='number' @disabled name='R2.Distributors[@dists].Manufacturers[@man2].Percent' value='@value' />
+                                                </div>
+                                                <div class="col-md-1">
+                                                    %
+                                                </div>
+                                            </div>
+                                            man2++;
+                                        }
+                                        
+                                    }
+                                }
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        '<label>Inne</label>
+                                    </div>
+                                </div>
+                                @foreach (webapp.Models.Manufacturer man in ViewBag.Manufacturers)
+                                {
+                                    var ckd = "";
+                                    var value = "0";
+                                    var disabled = "readonly=readonly";
+                                    if (man.CountryId == 0 && man.GroupId == 0)
+                                    {
+                                        if (Model != null && Model.R2 != null && d.Manufacturers != null)
+                                        {
+                                            foreach (webapp.Models.SelectedManufacturers sm in d.Manufacturers)
+                                            {
+                                                if (man.Id == sm.Id)
+                                                {
+                                                    value = sm.Percent.ToString();
+                                                    if (sm.Checked)
+                                                    {
+                                                        ckd = "checked";
+                                                        disabled = "";
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        <div class="row form-group">
+                                            <div class="col-md-6">
+                                                <input type='hidden' value='0' name='R2.Distributors[@dists].Manufacturers[@man2].GroupId' />
+                                                <input type='checkbox' value='true' class='manufacturerCheckbox' name='R2.Distributors[@dists].Manufacturers[@man2].Checked' @ckd /><input type='hidden' value='false' name='R2.Distributors[@dists].Manufacturers[@man2].Checked' />
+                                                @man.Name
+                                            </div>
+                                            <div class="col-md-3">
+                                                <input type="hidden" name="R2.Distributors[@dists].Manufacturers[@man2].Id" value="@man.Id">
+                                                <input class='form-control percentBox' type='number' @disabled name='R2.Distributors[@dists].Manufacturers[@man2].Percent' value='@value' />
+                                            </div>
+                                            <div class="col-md-1">
+                                                %
+                                            </div>
+                                        </div>
+                                        man2++;
+                                    }
+                                    
+                                }
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-primary" data-dismiss="modal">Ok</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                                dists++;
+            }
+
+        }
+    </div>
+}
+
+<div class="modal fade" id="new_distributor" tabindex="-1" role="dialog" aria-labelledby="label-new" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="label-new">Nowy dystrybutor</h4>
+            </div>
+            <div class="modal-body">
+                <div class="bg-danger hidden" id="newDistributorError">
+
+                </div>
+                <form id="newDistributorForm">
+                    <div class="row form-group">
+                        <div class="col-md-4">
+                            Nazwa
+                        </div>
+                        <div class="col-md-8">
+                            <input type="text" id="Name" name="Name" class="col-md-12 form-control" />
+                        </div>
+                    </div>
+
+                    <div class="row form-group">
+                        <div class="col-md-4">
+                            Miasto
+                        </div>
+                        <div class="col-md-8">
+                            <input type="text" name="City" class="col-md-12 form-control" />
+                        </div>
+                    </div>
+
+                    <div class="row form-group">
+                        <div class="col-md-4">
+                            Ulica
+                        </div>
+                        <div class="col-md-8">
+                            <input type="text" name="Street" class="col-md-12 form-control" />
+                        </div>
+                    </div>
+
+                    <div class="row form-group">
+                        <div class="col-md-4">
+                            Numer budynku
+                        </div>
+                        <div class="col-md-8">
+                            <input type="text" name="BuildingNumber" class="col-md-12 form-control" />
+                        </div>
+                    </div>
+
+                    <div class="row form-group">
+                        <div class="col-md-4">
+                            Kod pocztowy
+                        </div>
+                        <div class="col-md-8">
+                            <input type="text" name="PostCode" class="col-md-12 form-control" />
+                        </div>
+                    </div>
+
+                    <div class="row form-group">
+                        <div class="col-md-4">
+                            NIP
+                        </div>
+                        <div class="col-md-8">
+                            <input type="text" name="NIP" class="col-md-12 form-control" />
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="NewDistributor()">Ok</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+
+    var disCounter = @(dists);
+    var dc = @(dists);
+
+    var distributors = [
+        @for (int j = 0; j < ViewBag.Distributors.Count; j++)
+        {
+            @Html.Raw("{ Name: '" + ViewBag.Distributors[j].Name.Replace("'", "\\\'") + "', Id: " + ViewBag.Distributors[j].Id + ", IsMarket: " + (ViewBag.Distributors[j].IsMarket ? "true": "false") + " }\n")
+            @(j == ViewBag.Distributors.Count-1 ? "" : ",")
+        }
+    ];
+
+    function AddSupplier() {
+        var sup = suppliers[parseInt($("#supplier").val())];
+        html = "<div class='supplier row'>" +
+            "<div class='col-md-5'><input type='hidden' name='Suppliers[" + supCounter + "].Id' value='" + sup.Id + "' />" + sup.Name + " <button type='button' class='btn btn-default' onclick='javaascript: RemoveSupplier(this);'>Usuń</button></div>" +
+            "<div class='col-md-6'><input type='hidden' name='Suppliers[" + supCounter + "].Name' value='" + sup.Name + "' /><textarea rows='5' class='form-control' name='Suppliers[" + supCounter + "].Text' ></textarea></div>" +
+            "</div>";
+
+        $("#suppliersList").append(html);
+
+        supCounter++;
+    }
+
+    $(function () {
+        $("#cooperation").on("change", function () {
+            if (this.value == "true") {
+                if ($("#suppliersField").hasClass("hidden")) {
+                    $("#suppliersField").removeClass("hidden");
+                }
+            }
+            else {
+                if (!$("#suppliersField").hasClass("hidden")) {
+                    $("#suppliersField").addClass("hidden");
+                }
+            }
+        });
+
+
+        $(".manufacturerCheckbox").on("change", function () {
+            var percentBox = $(this).parent().parent().find(".percentBox");
+
+            if ($(this).is(":checked")) {
+                if (percentBox.prop("readonly")) {
+                    percentBox.prop("readonly",false);
+                }
+            }
+            else {
+                percentBox.val(0);
+                percentBox.prop("readonly", true);
+            }
+        });
+
+        $(".group .manufacturerCheckbox").on("change", function () {
+            var percentBox = $(this).parent().parent().find(".percentBox");
+
+            if ($(this).is(":checked")) {
+                if (percentBox.prop("readonly")) {
+                    percentBox.prop("readolny",false);
+                    percentBox.attr("readonly", false);
+                }
+            }
+            else {
+                percentBox.val(0);
+                percentBox.prop("readonly", true);
+                percentBox.attr("readonly", true);
+                var parent = $(this).parent().parent();
+                var id = parent.find(".hiddenId").val();
+                $("#group-" + id).find(".groupCheckbox").attr("checked",false);
+                $("#group-" + id).find(".groupPercentBox").attr("readonly", true);
+                $("#group-" + id).find(".groupPercentBox").val("0");
+            }
+        });
+
+        $(".groupCheckbox").on("change", function () {
+            var percentBox = $(this).parent().parent().find(".percentBox");
+
+            if ($(this).is(":checked")) {
+                if (percentBox.prop("readonly")) {
+                    percentBox.prop("readonly",false);
+                }
+                var id = $(this).parent().parent().find(".hiddenId").attr("value");
+                sum(id);
+            }
+            else {
+                var id = $(this).parent().parent().find(".hiddenId").attr("value");
+                percentBox.val(0);
+                percentBox.prop("readonly", true);
+                sum(id);
+            }
+        });
+
+        $(".groupPercentBox").on("change", function(){
+            var id = $(this).parent().parent().find(".hiddenId").attr("value");
+            sum(id);
+        });
+
+        $(".receiptId").on("change", function () {
+            if (this.value == "1") {
+                if ($("#receipt_1").hasClass("hidden")) {
+                    $("#receipt_1").removeClass("hidden");
+                }
+                if (!$("#receipt_2").hasClass("hidden")) {
+                    $("#receipt_2").addClass("hidden");
+                }
+            }
+            else if (this.value == "2") {
+                if (!$("#receipt_1").hasClass("hidden")) {
+                    $("#receipt_1").addClass("hidden");
+                }
+                if ($("#receipt_2").hasClass("hidden")) {
+                    $("#receipt_2").removeClass("hidden");
+                }
+            }
+            else if (this.value == "3") {
+                if ($("#receipt_1").hasClass("hidden")) {
+                    $("#receipt_1").removeClass("hidden");
+                }
+                if ($("#receipt_2").hasClass("hidden")) {
+                    $("#receipt_2").removeClass("hidden");
+                }
+            }
+        });
+    });
+
+    function sum(id){
+        var suma = 0;
+        $(".groupMan").each(function(){
+            var i = $(this).find(".hiddenId").attr("value");
+            if(i == id){
+                val = parseInt($(this).find(".percentBox").val());
+                if(!isNaN(val)){
+                    suma += val;
+                }
+            }
+        });
+        $(".group").each(function(){
+            var i = $(this).find(".hiddenId").attr("value");
+            if(i == id)
+            {
+                var percentBox = $(this).find(".percentBox");
+                percentBox.attr("value", suma);
+                percentBox.val(suma);
+                if(suma == 0){
+                    $(this).find(".manufacturerCheckbox").prop("checked",false);
+                    percentBox.prop("readonly", true);
+                }else{
+                    $(this).find(".manufacturerCheckbox").prop("checked",true);
+                    percentBox.prop("readonly", true);
+                }
+            }
+        });
+    }
+
+    function AddDistributor() {
+        var id = parseInt($("#dists").val());
+        var dis;
+        distributors.forEach(function(item){
+            if(item.Id == id){
+                dis = item;
+            }
+        });
+        html = "<div class='row form-group'>" +
+        "<div class='col-md-3'>" +
+            "<input type='checkbox' value='true' class='manufacturerCheckbox' name='R2.Distributors[" + disCounter + "].Checked' /><input type='hidden' value='false' name='R2.Distributors[" + disCounter + "].Checked' /> " +
+            dis.Name +
+        "</div>" +
+        "<div class=\"col-md-4\" id='addresses_" + disCounter + "'></div>" +
+        "<div class=\"col-md-2\">" +
+            "   <input type=\"hidden\" name=\"R2.Distributors[" + disCounter + "].Id\" value=\"" + dis.Id + "\">" +
+            "  <input class='form-control percentBox' type='number' readonly='readonly' name='R2.Distributors[" + disCounter + "].Percent' value='0' />" +
+        "</div>" +
+        "<div class=\"col-md-1\">" +
+        "    %" +
+        "</div>" +
+        " <div class=\"col-md-2\">" +
+        "     <button class=\"btn btn-default\" type=\"button\" data-toggle='modal' data-target='#dist-" + disCounter + "'>Określ asortyment</button>" +
+        " </div>" +
+    " </div>";
+
+        $("#distributorsList").append(html);
+
+        var addresses;
+        if(dis.IsMarket){
+            $.getJSON("/Agent/GetMarkets/" + id, function (data) {
+                var select = "<select name='R2.Distributors[" + disCounter + "].MarketAddressId' class='form-control'>";
+                select += "<option value=''></option>";
+                $.each(data, function (index, val) {
+                    select += "<option value='" + val.Id + "' >" + val.City + ", " + val.Street + " " + val.BuildingNumber + ", " + val.PostCode + "</option>";
+                });
+                select += "</select>";
+                $("#addresses_" + disCounter).html(select);
+                addModal("", 1);
+                disCounter++;
+            });
+        }
+        else{
+            addModal("", 1);
+            disCounter++;
+        }
+    }
+
+    function NewDistributor() {
+        $.ajax({
+            async: false,
+            type: "POST",
+            url: "/Agent/AddDistributor",
+            data: $("#newDistributorForm").serialize(),
+            dataType: "json",
+            success: function(response){
+                //var data = $.parseJSON(response);
+                if(response.Error == false){
+                    html = "<div class='row form-group'>" +
+                        "<div class='col-md-3'>" +
+                            "<input type='checkbox' value='true' class='manufacturerCheckbox' name='R2.Distributors[" + disCounter + "].Checked' /><input type='hidden' value='false' name='R2.Distributors[" + disCounter + "].Checked' /> " +
+                            response.Name +
+                        "</div>" +
+                        "<div class=\"col-md-4\"></div>" +
+                        "<div class=\"col-md-2\">" +
+                            "   <input type=\"hidden\" name=\"R2.Distributors[" + disCounter + "].Id\" value=\"" + response.Id + "\">" +
+                            "  <input class='form-control percentBox' type='number' readonly='readonly' name='R2.Distributors[" + disCounter + "].Percent' value='0' />" +
+                        "</div>" +
+                        "<div class=\"col-md-1\">" +
+                        "    %" +
+                        "</div>" +
+                        " <div class=\"col-md-2\">" +
+                        "     <button class=\"btn btn-default\" type=\"button\" data-toggle='modal' data-target='#dist-" + disCounter + "'>Określ asortyment</button>" +
+                        " </div>" +
+                    " </div>";
+
+                    $("#distributorsList").append(html);
+
+                    addModal("", 1);
+                    disCounter++;
+                    $("#newDistributorError").addClass("hidden");
+                    $("#new_distributor").modal("hide");
+                } else {
+                    var errors = "";
+                    $(response.ErrorsList).each(function(){
+                        errors += this + "<br/>";
+                    })
+                    $("#newDistributorError").html(errors);
+                    $("#newDistributorError").removeClass("hidden");
+                }
+            }
+        });
+
+    }
+
+    function addModal(name, id) {
+        html = "<div class=\"modal fade\" id=\"dist-" + disCounter + "\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"label-dist-" + dc + "\" aria-hidden=\"true\">" +
+       "<div class=\"modal-dialog\">" +
+           "<div class=\"modal-content\">" +
+               "<div class=\"modal-header\">" +
+              "     <h4 class=\"modal-title\" id=\"label-dist-" + dc + "\">Wybór asortymentu</h4>" +
+              " </div>" +
+              " <div class=\"modal-body\">";
+        @{
+            manuGroups = 0;
+            manufs = 0;
+            var mn = 0;
+        }
+        @foreach (var c in ((List<webapp.Models.Country>)ViewBag.Countries))
+        {<text>
+        html += "<div class=\"row\">" +
+        "<div class=\"col-md-12\">" +
+        "<label>@c.Name</label>" +
+        "</div>" +
+        "</div>";</text>
+            foreach (webapp.Models.ManufacturersGroup m in ViewBag.ManufacturersGroups)
+            {
+                if (m.CountryId == c.Id)
+            {<text>
+        html += "  <div class=\"row form-group\">" +
+        "  <div class=\"col-md-6\">" +
+         "     <input type=\"hidden\" id=\"group[@m.Id]selected\" name=\"R2.Distributors[" + disCounter + "].ManufacturersGroups[@manuGroups].SelectedManufacturers\" value=\"false\" />" +
+          "    <input type='checkbox' value='true' class='manufacturerCheckbox' name='R2.Distributors[" + disCounter + "].ManufacturersGroups[@manuGroups].Checked' /><input type='hidden' value='false' name='R2.Distributors[" + dc + "].ManufacturersGroups[@manuGroups].Checked' />" +
+         "     @m.Name" +
+         " </div>" +
+         " <div class=\"col-md-3\">" +
+         "     <input type=\"hidden\" name=\"R2.Distributors[" + disCounter + "].ManufacturersGroups[@manuGroups].Id\" value=\"@m.Id\">" +
+         "     <input class='form-control percentBox' type='number' readonly='readonly' id='group[@m.Id]percent' name='R2.Distributors[" + disCounter + "].ManufacturersGroups[@manuGroups].Percent' value='0' />" +
+         " </div>" +
+        "  <div class=\"col-md-1\">" +
+         "     %" +
+        "  </div>" +
+        "</div>";</text>
+            manufs = 0;
+                foreach (var mm in ViewBag.Manufacturers)
+                {
+                    if (mm.GroupId == m.Id)
+                    {<text>
+        html += " <div class=\"row form-group\">" +
+        " <div class=\"col-md-1\"></div>" +
+        " <div class=\"col-md-5\">" +
+         "    <input type='hidden' value='@mm.GroupId' name='R2.Distributors[" + disCounter + "].ManufacturersGroups[@manuGroups].Manufacturers[@manufs].GroupId' />" +
+          "   <input type='checkbox' value='true' class='manufacturerCheckbox' name='R2.Distributors[" + disCounter + "].ManufacturersGroups[@manuGroups].Manufacturers[@manufs].Checked' /><input type='hidden' value='false' name='R2.Distributors[" + dc + "].ManufacturersGroups[@manuGroups].Manufacturers[@manufs].Checked' />" +
+        " @mm.Name" +
+        "  </div>" +
+        " <div class=\"col-md-3\">" +
+        "      <input type=\"hidden\" name=\"R2.Distributors[" + disCounter + "].ManufacturersGroups[@manuGroups].Manufacturers[@manufs].Id\" value=\"@mm.Id\">" +
+        "     <input class='form-control percentBox' type='number' readonly='readonly' name='R2.Distributors[" + disCounter + "].ManufacturersGroups[@manuGroups].Manufacturers[@manufs].Percent' value='0' />" +
+        " </div>" +
+        "   <div class=\"col-md-1\">" +
+        "      %" +
+        "   </div>" +
+        " </div>";</text>
+                        manufs++;
+                    }
+                }
+                manuGroups++;
+            }
+        }
+        manufs = 0;
+        foreach (webapp.Models.Manufacturer m in ViewBag.Manufacturers)
+        {
+                if (m.CountryId == c.Id && m.GroupId == 0)
+        {<text>
+        html += " <div class=\"row form-group\">" +
+        "  <div class=\"col-md-6\">" +
+        " <input type='hidden' value='@m.GroupId' name='R2.Distributors[" + disCounter + "].Manufacturers[@mn].GroupId' />" +
+        " <input type='checkbox' value='true' class='manufacturerCheckbox' name='R2.Distributors[" + disCounter + "].Manufacturers[@mn].Checked' /><input type='hidden' value='false' name='R2.Distributors[" + disCounter + "].Manufacturers[@mn].Checked' />" +
+        "  @m.Name" +
+        " </div>" +
+        " <div class=\"col-md-3\">" +
+        "   <input type=\"hidden\" name=\"R2.Distributors[" + disCounter + "].Manufacturers[@mn].Id\" value=\"@m.Id\">" +
+        "   <input class='form-control percentBox' type='number' readonly='readonly' name='R2.Distributors[" + disCounter + "].Manufacturers[@mn].Percent' value='0' />" +
+        " </div>" +
+        "<div class=\"col-md-1\">" +
+        " %" +
+        "</div>" +
+        "</div>";</text>
+            manufs++;
+        }
+    }
+    }
+        html += '<div class="row">' +
+                        '<div class="col-md-12">' +
+                            '<label>Inne</label>' +
+                       ' </div>' +
+                       '</div>';
+        @foreach (webapp.Models.Manufacturer m in ViewBag.Manufacturers)
+        {
+                    if (m.CountryId == 0 && m.GroupId == 0)
+        {<text>
+        html += " <div class=\"row form-group\">" +
+        "  <div class=\"col-md-6\">" +
+        " <input type='hidden' value='0' name='R2.Manufacturers[@mn].GroupId' />" +
+        " <input type='checkbox' value='true' class='manufacturerCheckbox' name='R2.Distributors[" + disCounter + "].Manufacturers[@mn].Checked' /><input type='hidden' value='false' name='R2.Distributors[" + disCounter + "].Manufacturers[@mn].Checked' />" +
+        "  @m.Name" +
+        " </div>" +
+        " <div class=\"col-md-3\">" +
+        "   <input type=\"hidden\" name=\"R2.Distributors[" + disCounter + "].Manufacturers[@mn].Id\" value=\"@m.Id\">" +
+        "   <input class='form-control percentBox' type='number' readonly='readonly' name='R2.Distributors[" + disCounter + "].Manufacturers[@mn].Percent' value='0' />" +
+        " </div>" +
+        "<div class=\"col-md-1\">" +
+        " %" +
+        "</div>" +
+        "</div>";</text>
+            mn++;
+        }
+    }
+        html += "</div>" +
+        "<div class=\"modal-footer\">" +
+            "<button type=\"button\" class=\"btn btn-primary\" data-dismiss=\"modal\">Ok</button>" +
+        "</div>" +
+    "</div>" +
+    "</div>" +
+    "</div>" +
+    "";
+        $("#disModals").append(html);
+        dc++;
+
+        $(".manufacturerCheckbox").on("change", function () {
+            var percentBox = $(this).parent().parent().find(".percentBox");
+
+            if ($(this).is(":checked")) {
+                if (percentBox.prop("readonly")) {
+                    percentBox.prop("readonly",false);
+                }
+            }
+            else {
+                percentBox.val(0);
+                percentBox.prop("readonly", true);
+            }
+        });
+    }
+</script>
