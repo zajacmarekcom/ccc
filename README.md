@@ -18,8 +18,13 @@ I work on branches and pull requests. So I can also train my Git skills.
 
 ## Author
 Marek Zając
+
 Poland
+
 https://zajacmarek.com
+
 contact@zajacmarek.com
+
 https://facebook.com/zajacmarekblog
+
 https://www.youtube.com/c/Zajacmarekblog
