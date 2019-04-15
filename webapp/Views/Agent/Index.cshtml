@@ -1,6 +1,6 @@
 ﻿@using webapp.Enums
 @using webapp.Helpers.Atttributes
-@model webapp.Models.ViewModels.IndexViewModel
+@model webapp.Features.Agent.Home.HomeViewModel
 
 @{
     ViewBag.Title = "Strona główna";
@@ -22,19 +22,19 @@
             <caption class="text-center">Dane osobowe</caption>
             <tr>
                 <td><b>Login:</b></td>
-                <td>@(Model.CurrentUser.UserName)</td>
+                <td>@Model.User.Username</td>
             </tr>
             <tr>
                 <td><b>Imię i nazwisko:</b></td>
-                <td>@(Model.CurrentUser.FirstName) @(Model.CurrentUser.LastName)</td>
+                <td>@Model.User.Fullname</td>
             </tr>
             <tr>
                 <td><b>Adres e-mail:</b></td>
-                <td>@(Model.CurrentUser.Email)</td>
+                <td>@Model.User.Email</td>
             </tr>
             <tr>
                 <td><b>Telefon:</b></td>
-                <td>@(Model.CurrentUser.PhoneNumber)</td>
+                <td>@Model.User.PhoneNumber</td>
             </tr>
             <tr>
                 <td><b>Region:</b></td>
@@ -49,19 +49,19 @@
             <caption class="text-center">Statystyki</caption>
             <tr>
                 <td>Liczba firm <b>dokończonych:</b></td>
-                <td>@Html.ActionLink(Model.Status[1].ToString(), "AllGreen")</td>
+                <td>@Html.ActionLink(Model.GreenStatusCount, "AllGreen")</td>
             </tr>
             <tr>
                 <td>Liczba firm <b>niedokończonych:</b></td>
-                <td>@Html.ActionLink(Model.Status[0].ToString(), "AllUndone")</td>
+                <td>@Html.ActionLink(Model.UndoneStatusCount, "AllUndone")</td>
             </tr>
             <tr>
                 <td>Status <b>żółty:</b></td>
-                <td>@Html.ActionLink(Model.Status[2].ToString(), "AllYellow")</td>
+                <td>@Html.ActionLink(Model.YellowStatusCount, "AllYellow")</td>
             </tr>
             <tr>
                 <td>Status <b>brązowy:</b></td>
-                <td>@Html.ActionLink(Model.Status[3].ToString(), "AllBrown")</td>
+                <td>@Html.ActionLink(Model.BrownStatusCount, "AllBrown")</td>
             </tr>
         </table>
     </div>
@@ -95,25 +95,13 @@
                 <div class="col-md-2"></div>
                 <div class="col-md-8 text-center">
                     <ul class="pagination">
-                        @{
-                            int startPage = 1;
-                            int endPage = Model.Page + 3;
-                            if (Model.Page > 4)
-                            {
-                                startPage = Model.Page - 3;
-                            }
-                            if (Model.Page > Model.PageCount - 3)
-                            {
-                                endPage = Model.PageCount;
-                            }
-                        }
-                        @if (Model.Page > 1)
+                        @if (Model.Page.CurrentPage > 1)
                         {
-                            <li>@Html.ActionLink("<", "Index", new { sort = Model.Sort, page = Model.Page - 1 })</li>
+                            <li>@Html.ActionLink("<", "Index", new { sort = Model.Sort, page = Model.Page.CurrentPage - 1 })</li>
                         }
-                        @for (var i = startPage; i <= endPage; i++)
+                        @for (var i = Model.Page.StartPage; i <= Model.Page.EndPage; i++)
                         {
-                            if (i == Model.Page)
+                            if (i == Model.Page.CurrentPage)
                             {
                                 <li class="active"><span>@i <span class="sr-only">(current)</span></span></li>
                             }
@@ -122,9 +110,9 @@
                                 <li>@Html.ActionLink(i.ToString(), "Index", new { sort = Model.Sort, page = i })</li>
                             }
                         }
-                        @if (Model.Page < Model.PageCount)
+                        @if (!Model.Page.IsLastPage)
                         {
-                            <li>@Html.ActionLink(">", "Index", new { sort = Model.Sort, page = Model.Page + 1 })</li>
+                            <li>@Html.ActionLink(">", "Index", new { sort = Model.Sort, page = Model.Page.CurrentPage + 1 })</li>
                         }
                     </ul>
                 </div>
@@ -139,7 +127,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var data in Model.Items)
+                    @foreach (var data in Model.Clients)
                     {
                         <tr>
                             <td>@Html.ActionLink(data.Name, "ClientDetails", new { controller = "Client", id = data.Id })</td>
@@ -159,26 +147,24 @@
                 <div class="col-md-2"></div>
                 <div class="col-md-8 text-center">
                     <ul class="pagination">
-                        @{
-                        }
-                        @if(Model.Page > 1)
+                        @if (Model.Page.CurrentPage > 1)
                         {
-                            <li>@Html.ActionLink("<", "Index", new { sort = ViewBag.Sort, page = Model.Page - 1})</li>
+                            <li>@Html.ActionLink("<", "Index", new { sort = Model.Sort, page = Model.Page.CurrentPage - 1 })</li>
                         }
-                        @for (var i = startPage; i <= endPage; i++)
+                        @for (var i = Model.Page.StartPage; i <= Model.Page.EndPage; i++)
                         {
-                            if(i == Model.Page)
+                            if (i == Model.Page.CurrentPage)
                             {
                                 <li class="active"><span>@i <span class="sr-only">(current)</span></span></li>
                             }
                             else
                             {
-                                <li>@Html.ActionLink(i.ToString(), "Index", new { sort = Model.Sort, page = i})</li>
+                                <li>@Html.ActionLink(i.ToString(), "Index", new { sort = Model.Sort, page = i })</li>
                             }
                         }
-                        @if (Model.Page < Model.PageCount)
+                        @if (!Model.Page.IsLastPage)
                         {
-                            <li>@Html.ActionLink(">", "Index", new { sort = Model.Sort, page = Model.Page + 1 })</li>
+                            <li>@Html.ActionLink(">", "Index", new { sort = Model.Sort, page = Model.Page.CurrentPage + 1 })</li>
                         }
                     </ul>
                 </div>

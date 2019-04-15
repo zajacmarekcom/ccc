@@ -251,6 +251,10 @@
     <Compile Include="Enums\PackageType.cs" />
     <Compile Include="Enums\PriceType.cs" />
     <Compile Include="Enums\YesNo.cs" />
+    <Compile Include="Features\Agent\Home\ClientViewModel.cs" />
+    <Compile Include="Features\Agent\Home\HomeViewModel.cs" />
+    <Compile Include="Features\Agent\Home\PageViewModel.cs" />
+    <Compile Include="Features\Agent\Home\UserViewModel.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
