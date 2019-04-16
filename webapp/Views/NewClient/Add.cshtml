@@ -1,0 +1,494 @@
+﻿@model webapp.Features.Clients.Add.NewClientViewModel
+
+@{
+    ViewBag.Title = "Dodaj firmę";
+    HtmlHelper.ClientValidationEnabled = false;
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    <input type="hidden" name="Model.IsBranch" value="false" />
+    <div class="row">
+        <div class="col-md-2"></div>
+        <div class="panel panel-default col-md-8">
+            <div class="panel-heading">
+                <h3 class="panel-title">Dane klienta</h3>
+            </div>
+            <div class="panel-body">
+
+                <div class="row form-group">
+                    <div class="col-md-4">
+                        @Html.LabelFor(model => model.Model.Status)
+                    </div>
+                    <div class="col-md-8">
+                        <select name="Status" class="form-control">
+                            <option value="1" @(Model.Model != null && Model.Model.Status == 1 ? "selected" : "")>Nie dotyczy</option>
+                            <option value="2" @(Model.Model != null && Model.Model.Status == 2 ? "selected" : "")>Nie istnieje</option>
+                            <option value="3" @(Model.Model != null && Model.Model.Status == 3 ? "selected" : "")>Nie jest odbiorcą cementu</option>
+                        </select>
+                        @Html.ValidationMessageFor(model => model.Model.Status)
+                    </div>
+                </div>
+
+                <div class="row form-group">
+                    <div class="col-md-4">
+                        @Html.LabelFor(model => model.Model.CooperationTypeId)
+                    </div>
+                    <div class="col-md-8">
+                        <select name="CooperationTypeId" id="CooperationTypeId" class="form-control">
+                            <option value="1" @(Model.Model != null && Model.Model.CooperationTypeId == 1 ? "selected" : "")>Bezpośrednia</option>
+                            <optgroup label="Pośrednia">
+                                <option value="2" @(Model.Model != null && Model.Model.CooperationTypeId == 2 ? "selected" : "")>Status 2</option>
+                                <option value="3" @(Model.Model != null && Model.Model.CooperationTypeId == 3 ? "selected" : "")>Status 3</option>
+                            </optgroup>
+                            <option value="4" @(Model.Model != null && Model.Model.CooperationTypeId == 4 ? "selected" : "")>Brak</option>
+                        </select>
+                        @Html.ValidationMessageFor(model => model.Model.CooperationTypeId)
+                    </div>
+                </div>
+
+                <div class="row form-group">
+                    <div class="col-md-4">
+                    </div>
+                    <div class="col-md-8">
+                        <h4>Adres:</h4>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-md-4">
+                        @Html.LabelFor(model => model.Model.RecipientName)
+                    </div>
+                    <div class="col-md-8">
+                        @Html.TextBoxFor(model => model.Model.RecipientName, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.Model.RecipientName)
+                    </div>
+                </div>
+
+                <div class="row form-group">
+                    <div class="col-md-4">
+                        @Html.LabelFor(model => model.Model.Street)
+                    </div>
+                    <div class="col-md-8">
+                        @Html.TextBoxFor(model => model.Model.Street, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.Model.Street)
+                    </div>
+                </div>
+
+                <div class="row form-group">
+                    <div class="col-md-4">
+                        @Html.LabelFor(model => model.Model.BuildingNumber)
+                    </div>
+                    <div class="col-md-8">
+                        @Html.TextBoxFor(model => model.Model.BuildingNumber, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.Model.BuildingNumber)
+                    </div>
+                </div>
+
+                <div class="row form-group">
+                    <div class="col-md-4">
+                        @Html.LabelFor(model => model.Model.PostCode)
+                    </div>
+                    <div class="col-md-8">
+                        @Html.TextBoxFor(model => model.Model.PostCode, new { @class = "form-control", placeholder = "XX-XXX" })
+                        @Html.ValidationMessageFor(model => model.Model.PostCode)
+                    </div>
+                </div>
+
+                <div class="row form-group">
+                    <div class="col-md-4">
+                        @Html.LabelFor(model => model.Model.ProvinceId)
+                    </div>
+                    <div class="col-md-8">
+                        <select id="ProvinceId" name="ProvinceId" class="form-control">
+                            <option value="">Wybierz...</option>
+                            @foreach (var p in Model.Data.Provinces)
+                            {
+                                <option value="@p.Id" @(Model.Model != null && Model.Model.ProvinceId == p.Id ? "selected" : "")>@p.Name</option>
+                            }
+                        </select>
+                        @Html.ValidationMessageFor(model => model.Model.ProvinceId)
+                    </div>
+                </div>
+                <div id="districtDiv" class="row form-group @(Model.Model != null ? "" : "hidden")">
+                    <div class="col-md-4">
+                        @Html.LabelFor(model => model.Model.DistrictId)
+                    </div>
+                    <div class="col-md-8">
+                        <select id="DistrictId" name="DistrictId" class="form-control">
+                            <option value="">Wybierz...</option>
+                            @if (Model.Model != null)
+                            {
+                                foreach (var d in Model.Data.Districts)
+                                {
+                                    <option value="@d.Id" @(Model.Model != null && Model.Model.DistrictId == d.Id ? "selected" : "")>@d.Name</option>
+                                }
+                            }
+                        </select>
+                        @Html.ValidationMessageFor(model => model.Model.DistrictId)
+                    </div>
+                </div>
+
+                <div id="cityDiv" class="row form-group @(Model.Model != null ? "" : "hidden")">
+                    <div class="col-md-4">
+                        @Html.LabelFor(model => model.Model.City)
+                    </div>
+                    <div class="col-md-8">
+                        @Html.TextBoxFor(model => model.Model.City, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.Model.City)
+                    </div>
+                </div>
+
+                <div class="row form-group">
+                    <div class="col-md-4">
+                    </div>
+                    <div class="col-md-8">
+                        <h4>Pozostałe dane:</h4>
+                    </div>
+                </div>
+
+                <div class="row form-group">
+                    <div class="col-md-4">
+                        @Html.LabelFor(model => model.Model.NIP)
+                    </div>
+                    <div class="col-md-8">
+                        @Html.TextBoxFor(model => model.Model.NIP, new {@class = "form-control"})
+                        @Html.ValidationMessageFor(model => model.Model.NIP)
+                    </div>
+                </div>
+
+                <div class="row form-group @(Model.Model != null && Model.Model.CooperationTypeId != 1 ? "hidden" : "")" id="sapDiv">
+                    <div class="col-md-4">
+                        @Html.LabelFor(model => model.Model.Sap)
+                    </div>
+                    <div class="col-md-8">
+                        @Html.TextBoxFor(model => model.Model.Sap, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.Model.Sap)
+                    </div>
+                </div>
+
+                <div class="row form-group">
+                    <div class="col-md-4">
+                        @Html.LabelFor(model => model.Model.LegalFormId)
+                    </div>
+                    <div class="col-md-8">
+                        <select class="form-control" name="LegalFormId">
+                            @foreach (var leg in Model.Data.LegalForms)
+                            {
+                                <option value="@leg.Id" @(Model.Model != null && Model.Model.LegalFormId == leg.Id ? "selected" : "")>@leg.Name</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row form-group">
+                    <div class="col-md-4">
+                        @Html.LabelFor(model => model.Model.StartYear)
+                    </div>
+                    <div class="col-md-8">
+                        <select name="StartYear" class="form-control">
+                            @for (int y = DateTime.Now.Year; y >= 1900; y--)
+                            {
+                                <option value="@y" @(Model.Model != null && Model.Model.StartYear == y ? "selected" : "")>@y</option>
+                            }
+                        </select>
+                        @Html.ValidationMessageFor(model => model.Model.StartYear)
+                    </div>
+                </div>
+
+                <div class="row form-group">
+                    <div class="col-md-4">
+                        @Html.LabelFor(model => model.Model.GroupMember)
+                    </div>
+                    <div class="col-md-8">
+                        <select class="form-control" name="GroupMember" id="groupMember">
+                            <option value="false" @(Model.Model != null && !Model.Model.GroupMember ? "selected" : "")>Nie</option>
+                            <option value="true" @(Model.Model != null && Model.Model.GroupMember ? "selected" : "")>Tak</option>
+                        </select>
+                        @Html.ValidationMessageFor(model => model.Model.GroupMember)
+                    </div>
+                </div>
+
+                <div class="row form-group @(Model.Model != null && Model.Model.GroupMember == true ? "" : "hidden")" id="groups">
+                    <div class="col-md-4">
+                        @Html.LabelFor(model => model.Model.GroupId)
+                    </div>
+                    <div class="col-md-8">
+                        <select class="form-control" name="GroupId">
+                            <option value="0"></option>
+                            @foreach (var g in Model.Data.Groups)
+                            {
+                                <option value="@g.Id" @(Model.Model != null && Model.Model.GroupId == g.Id ? "selected" : "")>@g.Name</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row form-group">
+                    <div class="col-md-4">
+                        @Html.LabelFor(model => model.Model.Owner)
+                    </div>
+                    <div class="col-md-8">
+                        @Html.TextBoxFor(model => model.Model.Owner, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.Model.Owner)
+                    </div>
+                </div>
+
+                <div class="row form-group">
+                    <div class="col-md-4">
+                        @Html.LabelFor(model => model.Model.OwnerPhoneNumber)
+                    </div>
+                    <div class="col-md-8">
+                        @Html.TextBoxFor(model => model.Model.OwnerPhoneNumber, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.Model.OwnerPhoneNumber)
+                    </div>
+                </div>
+
+                <div class="row form-group">
+                    <div class="col-md-4">
+                        @Html.LabelFor(model => model.Model.PhoneNumber)
+                    </div>
+                    <div class="col-md-8">
+                        @Html.TextBoxFor(model => model.Model.PhoneNumber, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.Model.PhoneNumber)
+                    </div>
+                </div>
+
+                <div class="row form-group">
+                    <div class="col-md-4">
+                        @Html.LabelFor(model => model.Model.PhoneNumber2)
+                    </div>
+                    <div class="col-md-8">
+                        @Html.TextBoxFor(model => model.Model.PhoneNumber2, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.Model.PhoneNumber2)
+                    </div>
+                </div>
+
+                <div class="row form-group">
+                    <div class="col-md-4">
+                        @Html.LabelFor(model => model.Model.PhoneNumber3)
+                    </div>
+                    <div class="col-md-8">
+                        @Html.TextBoxFor(model => model.Model.PhoneNumber3, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.Model.PhoneNumber3)
+                    </div>
+                </div>
+
+                <div class="row form-group">
+                    <div class="col-md-4">
+                        @Html.LabelFor(model => model.Model.Emial)
+                    </div>
+                    <div class="col-md-8">
+                        @Html.TextBoxFor(model => model.Model.Emial, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.Model.Emial)
+                    </div>
+                </div>
+
+                <div class="row form-group">
+                    <div class="col-md-4">
+                        @Html.LabelFor(model => model.Model.Website)
+                    </div>
+                    <div class="col-md-8">
+                        @Html.TextBoxFor(model => model.Model.Website, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.Model.Website)
+                    </div>
+                </div>
+
+                <div class="row form-group">
+                    <div class="col-md-4">
+                        @Html.LabelFor(model => model.Model.AgentId)
+                    </div>
+                    <div class="col-md-8">
+                        <select id="ProvinceId" name="AgentId" class="form-control">
+                            @foreach (var agent in Model.Data.Agents)
+                            {
+                                <option value="@agent.Id" @(Model.Model != null && Model.Model.AgentId == agent.Id ? "selected" : "")>@agent.FullName</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row form-group">
+                    <div class="col-md-4">
+                    </div>
+                    <div class="col-md-8">
+                        <h4>Osoba do kontaktu:</h4>
+                    </div>
+                </div>
+
+                <div class="row form-group">
+                    <div class="col-md-4">
+                        @Html.LabelFor(model => model.Model.ContactPerson)
+                    </div>
+                    <div class="col-md-8">
+                        @Html.TextBoxFor(model => model.Model.ContactPerson, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.Model.ContactPerson)
+                    </div>
+                </div>
+
+                <div class="row form-group">
+                    <div class="col-md-4">
+                        @Html.LabelFor(model => model.Model.ContactPersonPosition)
+                    </div>
+                    <div class="col-md-8">
+                        @Html.TextBoxFor(model => model.Model.ContactPersonPosition, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.Model.ContactPersonPosition)
+                    </div>
+                </div>
+
+                <div class="row form-group">
+                    <div class="col-md-4">
+                        @Html.LabelFor(model => model.Model.ContactPersonEmail)
+                    </div>
+                    <div class="col-md-8">
+                        @Html.TextBoxFor(model => model.Model.ContactPersonEmail, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.Model.ContactPersonEmail)
+                    </div>
+                </div>
+
+                <div class="row form-group">
+                    <div class="col-md-4">
+                        @Html.LabelFor(model => model.Model.ContactPersonPhoneNumber)
+                    </div>
+                    <div class="col-md-8">
+                        @Html.TextBoxFor(model => model.Model.ContactPersonPhoneNumber, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.Model.ContactPersonPhoneNumber)
+                    </div>
+                </div>
+
+                <div class="row form-group">
+                    <div class="col-md-4">
+                    </div>
+                    <div class="col-md-8">
+                        @Html.ValidationMessageFor(model => model.Model.BusinessId)
+                    </div>
+                </div>
+
+                <p>
+                    <input class="btn btn-primary form-control" type="submit" value="Dalej" />
+                </p>
+            </div>
+        </div>
+        <div class="col-md-2"></div>
+    </div>
+
+}
+
+<script>
+    $(function () {
+
+        $("#ProvinceId").on("change", function () {
+            $("#DistrictId").html("");
+            $("#DistrictId").html("<option value='0'>Wybierz...</option>");
+            if (this.value == 0) {
+                if (!$("#districtDiv").hasClass("hidden")) {
+                    $("#districtDiv").addClass("hidden");
+                }
+                if (!$("#cityDiv").hasClass("hidden")) {
+                    $("#cityDiv").addClass("hidden");
+                    $("#City").val("");
+                }
+            }
+            else {
+                $.getJSON("/Data/Districts/" + $("#ProvinceId").val(), function (data) {
+                    $.each(data, function (index, val) {
+                        $("#DistrictId").append("<option value='" + val.Id + "' >" + val.Name + "</option>");
+                    });
+                });
+                $("#districtDiv").removeClass("hidden");
+            }
+        });
+
+        $("#DistrictId").on("change", function () {
+            if (this.value == 0) {
+                if (!$("#cityDiv").hasClass("hidden")) {
+                    $("#cityDiv").addClass("hidden");
+                    $("#City").val("");
+                }
+            }
+            else {
+                $("#cityDiv").removeClass("hidden");
+            }
+        });
+
+        $("#CooperationTypeId").on("change", function () {
+            if (this.value != "1") {
+                if (!$("#sapDiv").hasClass("hidden")) {
+                    $("#sapDiv").addClass("hidden");
+                }
+            }
+            else {
+                $("#sapDiv").removeClass("hidden");
+            }
+        });
+
+        $("#groupMember").on("change", function () {
+            if (this.value == "false") {
+                if (!$("#groups").hasClass("hidden")) {
+                    $("#groups").addClass("hidden");
+                }
+            }
+            else {
+                $("#groups").removeClass("hidden");
+            }
+        });
+
+        $("#PostCode").on("keyup", function () {
+            if ($(this).val() != null && $(this).val() != "") {
+                $.getJSON("@Url.Action("CheckCode", "Commons")", { code: $(this).val() }, function (data) {
+                    $("#cityDiv").removeClass("hidden");
+                    $("#districtDiv").removeClass("hidden");
+                    $("#City").val(data.City);
+                    $("#ProvinceId").unbind("change");
+                    $("#DistrictId").unbind("change");
+                    var dist = data.DistrictId;
+                    $("#ProvinceId").on("change", function() {
+                        $.getJSON("/Data/Districts/" + $("#ProvinceId").val(), function (data) {
+                            $.each(data, function (index, val) {
+                                $("#DistrictId").append("<option value='" + val.Id + "' >" + val.Name + "</option>");
+                            });
+                            $("#DistrictId").val(dist).change();
+                            $("#ProvinceId").on("change", function () {
+                                $("#DistrictId").html("");
+                                $("#DistrictId").html("<option value='0'>Wybierz...</option>");
+                                if (this.value == 0) {
+                                    if (!$("#districtDiv").hasClass("hidden")) {
+                                        $("#districtDiv").addClass("hidden");
+                                    }
+                                    if (!$("#cityDiv").hasClass("hidden")) {
+                                        $("#cityDiv").addClass("hidden");
+                                        $("#City").val("");
+                                    }
+                                }
+                                else {
+                                    $.getJSON("/Data/Districts/" + $("#ProvinceId").val(), function (data) {
+                                        $.each(data, function (index, val) {
+                                            $("#DistrictId").append("<option value='" + val.Id + "' >" + val.Name + "</option>");
+                                        });
+                                    });
+                                    $("#districtDiv").removeClass("hidden");
+                                }
+                            });
+
+                            $("#DistrictId").on("change", function () {
+                                if (this.value == 0) {
+                                    if (!$("#cityDiv").hasClass("hidden")) {
+                                        $("#cityDiv").addClass("hidden");
+                                        $("#City").val("");
+                                    }
+                                }
+                                else {
+                                    $("#cityDiv").removeClass("hidden");
+                                }
+                            });
+                        });
+                        $("#districtDiv").removeClass("hidden");
+                    });
+                    $('#ProvinceId').val(data.ProvinceId).change();
+                });
+            }
+        });
+    });
+</script>

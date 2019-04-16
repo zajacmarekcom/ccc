@@ -23,31 +23,34 @@ namespace webapp.Controllers
         [HttpGet]
         public ActionResult Add()
         {
-            ViewBag.Data = _newClientDao.GetNewClientFormData();
+            var vm = new NewClientViewModel
+            {
+                Data = _newClientDao.GetNewClientFormData()
+            };
 
-            return View("~/Views/Agent/Add.cshtml");
+            return View(vm);
         }
 
         [HttpPost]
-        public ActionResult Add(BusinessData data)
+        public ActionResult Add(NewClientViewModel data)
         {
             var isError = !ModelState.IsValid;
 
-            if (_newClientDao.NipExists(data.NIP))
+            if (_newClientDao.NipExists(data.Model.NIP))
             {
                 isError = true;
-                ModelState.AddModelError("NIP", "Firma o podanym numerze NIP już została dodana");
+                ModelState.AddModelError("Model.NIP", "Firma o podanym numerze NIP już została dodana");
             }
 
             if (isError)
             {
-                ViewBag.Data = _newClientDao.GetNewClientFormData();
-                return View("~/Views/Agent/Add.cshtml", data);
+                data.Data = _newClientDao.GetNewClientFormData();
+                return View(data);
             }
 
-            _newClientDao.SaveNewClient(data, ((CustomPrincipal)User).CustomIdentity.UserId);
+            _newClientDao.SaveNewClient(data.Model, ((CustomPrincipal)User).CustomIdentity.UserId);
 
-            return RedirectToAction("AddVisit_Step1", "Agent", new { businessId = data.BusinessId });
+            return RedirectToAction("AddVisit_Step1", "Agent", new { businessId = data.Model.BusinessId });
         }
     }
 }

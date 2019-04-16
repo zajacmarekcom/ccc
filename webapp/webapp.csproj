@@ -253,6 +253,7 @@
     <Compile Include="Enums\PriceType.cs" />
     <Compile Include="Enums\YesNo.cs" />
     <Compile Include="Features\Clients\Add\NewClientDao.cs" />
+    <Compile Include="Features\Clients\Add\NewClientViewModel.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -999,6 +1000,7 @@
     <Content Include="Views\Admin\AddFile.cshtml" />
     <Content Include="Views\Admin\LoadPostCodes.cshtml" />
     <Content Include="Views\Admin\Groups.cshtml" />
+    <Content Include="Views\NewClient\Add.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
