@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using webapp.Controllers;
 using webapp.Models;
+using webapp.Models.ViewModels;
 
 namespace webapp.Features.Clients.Add
 {
@@ -26,6 +27,25 @@ namespace webapp.Features.Clients.Add
             DataController.GetPosition(ref data);
             _context.BusinessDatas.Add(data);
             _context.SaveChanges();
+        }
+
+        public AddActionAdditionalData GetNewClientFormData()
+        {
+            var data = new AddActionAdditionalData()
+            {
+                Districts = _context.Districts.ToList(),
+                Provinces = _context.Provinces.ToList(),
+                Agents = _context.Agents.ToList(),
+                LegalForms = _context.LegalForms.ToList(),
+                Groups = _context.Groups.ToList()
+            };
+
+            return data;
+        }
+
+        public bool NipExists(string nip)
+        {
+            return _context.BusinessDatas.Any(x => x.NIP == nip);
         }
     }
 }

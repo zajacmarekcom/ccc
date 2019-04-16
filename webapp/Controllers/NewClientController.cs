@@ -23,7 +23,7 @@ namespace webapp.Controllers
         [HttpGet]
         public ActionResult Add()
         {
-            ViewBag.Data = AddHelper.FillAdditionalData(_context, 0);
+            ViewBag.Data = _newClientDao.GetNewClientFormData();
 
             return View("~/Views/Agent/Add.cshtml");
         }
@@ -33,7 +33,7 @@ namespace webapp.Controllers
         {
             var isError = !ModelState.IsValid;
 
-            if (_context.BusinessDatas.Any(x => x.NIP == data.NIP))
+            if (_newClientDao.NipExists(data.NIP))
             {
                 isError = true;
                 ModelState.AddModelError("NIP", "Firma o podanym numerze NIP już została dodana");
@@ -41,7 +41,7 @@ namespace webapp.Controllers
 
             if (isError)
             {
-                ViewBag.Data = AddHelper.FillAdditionalData(_context, data.ProvinceId);
+                ViewBag.Data = _newClientDao.GetNewClientFormData();
                 return View("~/Views/Agent/Add.cshtml", data);
             }
 
