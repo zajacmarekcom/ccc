@@ -88,12 +88,6 @@ namespace webapp.Controllers
                 ViewBag.Data = AddHelper.FillAdditionalData(_context, data.ProvinceId);
                 return View(data);
             }
-            if ((!edit.HasValue || edit.Value == false) && !data.IsBranch && _businessRepository.NipExist(data.NIP))
-            {
-                ModelState.AddModelError("NIP", "Firma o podanym numerze NIP już została dodana");
-                ViewBag.Data = AddHelper.FillAdditionalData(_context, data.ProvinceId ?? 0);
-                return View(data);
-            }
             if (TempData["BranchId"] != null && (int)(TempData["BranchId"]) != 0)
             {
                 var id = (int)TempData["BranchId"];
@@ -105,15 +99,6 @@ namespace webapp.Controllers
             {
                 DataController.GetPosition(ref data);
                 _context.Entry(data).State = EntityState.Modified;
-            }
-            else
-            {
-                _context.Businesses.Add(business);
-                _context.SaveChanges();
-                data.BusinessId = business.Id;
-                DataController.GetPosition(ref data);
-                _context.BusinessDatas.Add(data);
-
             }
             _context.SaveChanges();
             return RedirectToAction("AddVisit_Step1", "Agent", new { businessId = data.BusinessId, edit });
