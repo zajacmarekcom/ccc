@@ -252,6 +252,7 @@
     <Compile Include="Enums\PackageType.cs" />
     <Compile Include="Enums\PriceType.cs" />
     <Compile Include="Enums\YesNo.cs" />
+    <Compile Include="Features\Clients\Add\NewClientDao.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -1001,7 +1002,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Features\Clients\Add\" />
     <Folder Include="Filters\" />
     <Folder Include="Properties\PublishProfiles\" />
   </ItemGroup>

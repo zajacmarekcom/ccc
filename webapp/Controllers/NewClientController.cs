@@ -4,13 +4,21 @@ using webapp.Models;
 using webapp.Utils.ControllersHelpers;
 using System;
 using System.Linq;
+using webapp.Features.Clients.Add;
 
 namespace webapp.Controllers
 {
     [Authorize(Roles = "agent")]
     public class NewClientController : Controller
     {
-        private readonly WebappContext _context = new WebappContext();
+        private readonly WebappContext _context;
+        private readonly NewClientDao _newClientDao;
+
+        public NewClientController()
+        {
+            _context = new WebappContext();
+            _newClientDao = new NewClientDao(_context);
+        }
 
         [HttpGet]
         public ActionResult Add()
@@ -37,15 +45,7 @@ namespace webapp.Controllers
                 return View("~/Views/Agent/Add.cshtml", data);
             }
 
-            data.AddDate = DateTime.Now;
-            var business = new Business { CreatorId = ((CustomPrincipal)User).CustomIdentity.UserId };
-
-            _context.Businesses.Add(business);
-            _context.SaveChanges();
-            data.BusinessId = business.Id;
-            DataController.GetPosition(ref data);
-            _context.BusinessDatas.Add(data);
-            _context.SaveChanges();
+            _newClientDao.SaveNewClient(data, ((CustomPrincipal)User).CustomIdentity.UserId);
 
             return RedirectToAction("AddVisit_Step1", "Agent", new { businessId = data.BusinessId });
         }
