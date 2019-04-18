@@ -43,7 +43,7 @@ namespace webapp.Models
         [Required(ErrorMessage = "Pole nie może być puste")]
         [DataType(DataType.Password)]
         [Display(Name = "Powtórz hasło")]
-        [Compare("Password", ErrorMessage = "Podane hasła nie są takie same")]
+        [System.ComponentModel.DataAnnotations.Compare("Password", ErrorMessage = "Podane hasła nie są takie same")]
         public string ConfirmPassword { get; set; }
 
         [DataType(DataType.EmailAddress)]
