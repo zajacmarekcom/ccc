@@ -5,6 +5,7 @@ using webapp.Utils.ControllersHelpers;
 using System;
 using System.Linq;
 using webapp.Features.Clients.Add;
+using FluentValidation.Mvc;
 
 namespace webapp.Features.Clients.Add
 {
@@ -34,16 +35,11 @@ namespace webapp.Features.Clients.Add
         [HttpPost]
         public ActionResult Add(NewClientViewModel data)
         {
-            var isError = !ModelState.IsValid;
-
-            if (_newClientDao.NipExists(data.Model.NIP))
+            var validator = new NewClientViewModelValidator(_newClientDao);
+            var result = validator.Validate(data);
+            if (!result.IsValid)
             {
-                isError = true;
-                ModelState.AddModelError("Model.NIP", "Firma o podanym numerze NIP już została dodana");
-            }
-
-            if (isError)
-            {
+                result.AddToModelState(ModelState, null);
                 data.Data = _newClientDao.GetNewClientFormData();
                 return View(data);
             }
