@@ -219,7 +219,7 @@
     <Compile Include="Controllers\ClientController.cs" />
     <Compile Include="Controllers\CommonsController.cs" />
     <Compile Include="Controllers\DataController.cs" />
-    <Compile Include="Controllers\NewClientController.cs" />
+    <Compile Include="Features\Clients\Add\NewClientController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManagerController.cs" />
     <Compile Include="Enums\BrandPowerValue.cs" />

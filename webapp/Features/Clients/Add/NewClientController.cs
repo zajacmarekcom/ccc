@@ -6,7 +6,7 @@ using System;
 using System.Linq;
 using webapp.Features.Clients.Add;
 
-namespace webapp.Controllers
+namespace webapp.Features.Clients.Add
 {
     [Authorize(Roles = "agent")]
     public class NewClientController : Controller
