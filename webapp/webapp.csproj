@@ -225,7 +225,6 @@
     <Compile Include="Controllers\ClientController.cs" />
     <Compile Include="Controllers\CommonsController.cs" />
     <Compile Include="Controllers\DataController.cs" />
-    <Compile Include="Features\Clients\Add\NewClientController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManagerController.cs" />
     <Compile Include="Enums\BrandPowerValue.cs" />
@@ -235,9 +234,10 @@
     <Compile Include="Enums\PackageType.cs" />
     <Compile Include="Enums\PriceType.cs" />
     <Compile Include="Enums\YesNo.cs" />
-    <Compile Include="Features\Clients\Add\NewClientDao.cs" />
-    <Compile Include="Features\Clients\Add\NewClientViewModel.cs" />
-    <Compile Include="Features\Clients\Add\NewClientViewModelValidator.cs" />
+    <Compile Include="Controllers\NewClientController.cs" />
+    <Compile Include="Features\Clients\NewClient\NewClientDao.cs" />
+    <Compile Include="Features\Clients\NewClient\NewClientViewModel.cs" />
+    <Compile Include="Features\Clients\NewClient\NewClientViewModelValidator.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>

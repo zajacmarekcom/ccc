@@ -6,7 +6,6 @@ using FluentValidation.Attributes;
 namespace webapp.Models
 {
     [Serializable]
-    [Validator(typeof(BusinessDataValidator))]
     public class BusinessData
     {
         public int Id { get; set; }

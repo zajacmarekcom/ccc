@@ -6,7 +6,7 @@ using System.Web;
 using webapp.Models;
 using webapp.Models.ViewModels;
 
-namespace webapp.Features.Clients.Add
+namespace webapp.Features.Clients.NewClient
 {
     public class NewClientViewModel
     {

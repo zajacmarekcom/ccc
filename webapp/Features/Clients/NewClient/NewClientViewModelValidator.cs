@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace webapp.Features.Clients.Add
+namespace webapp.Features.Clients.NewClient
 {
     public class NewClientViewModelValidator : AbstractValidator<NewClientViewModel>
     {

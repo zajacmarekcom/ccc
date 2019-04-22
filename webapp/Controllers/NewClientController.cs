@@ -1,13 +1,10 @@
 ﻿using webapp.Security;
 using System.Web.Mvc;
 using webapp.Models;
-using webapp.Utils.ControllersHelpers;
-using System;
-using System.Linq;
-using webapp.Features.Clients.Add;
 using FluentValidation.Mvc;
+using webapp.Features.Clients.NewClient;
 
-namespace webapp.Features.Clients.Add
+namespace webapp.Controllers
 {
     [Authorize(Roles = "agent")]
     public class NewClientController : Controller
@@ -37,7 +34,7 @@ namespace webapp.Features.Clients.Add
         {
             var validator = new NewClientViewModelValidator(_newClientDao);
             var result = validator.Validate(data);
-            if (!result.IsValid)
+            if (!result.IsValid && !ModelState.IsValid)
             {
                 result.AddToModelState(ModelState, null);
                 data.Data = _newClientDao.GetNewClientFormData();
@@ -46,7 +43,7 @@ namespace webapp.Features.Clients.Add
 
             _newClientDao.SaveNewClient(data.Model, ((CustomPrincipal)User).CustomIdentity.UserId);
 
-            return RedirectToAction("AddVisit_Step1", "Agent", new { businessId = data.Model.BusinessId });
+            return RedirectToAction("Add", "NewVisit", new { id = data.Model.BusinessId });
         }
     }
 }
